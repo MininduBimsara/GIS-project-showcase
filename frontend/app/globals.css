@@ -1,0 +1,209 @@
+@import "tailwindcss";
+
+/* Tailwind CSS 4 Configuration */
+@theme {
+  /* Custom Font Families */
+  --font-family-sans: var(--font-inter), system-ui, sans-serif;
+  --font-family-serif: var(--font-merriweather), Georgia, serif;
+  --font-family-lora: var(--font-lora), Georgia, serif;
+
+  /* Government Blue Color Palette */
+  --color-gov-blue-50: #eff6ff;
+  --color-gov-blue-100: #dbeafe;
+  --color-gov-blue-200: #bfdbfe;
+  --color-gov-blue-300: #93c5fd;
+  --color-gov-blue-400: #60a5fa;
+  --color-gov-blue-500: #3b82f6;
+  --color-gov-blue-600: #2563eb;
+  --color-gov-blue-700: #1d4ed8;
+  --color-gov-blue-800: #1e40af;
+  --color-gov-blue-900: #1e3a8a;
+
+  /* Government Gray Palette */
+  --color-gov-gray-50: #f8fafc;
+  --color-gov-gray-100: #f1f5f9;
+  --color-gov-gray-200: #e2e8f0;
+  --color-gov-gray-300: #cbd5e1;
+  --color-gov-gray-400: #94a3b8;
+  --color-gov-gray-500: #64748b;
+  --color-gov-gray-600: #475569;
+  --color-gov-gray-700: #334155;
+  --color-gov-gray-800: #1e293b;
+  --color-gov-gray-900: #0f172a;
+
+  /* Spacing */
+  --spacing-section: 4rem;
+  --spacing-card: 2rem;
+}
+
+/* Base Styles - NO @apply directives */
+* {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+  border-color: #e5e7eb;
+}
+
+html {
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  font-family: var(--font-family-sans);
+}
+
+body {
+  margin: 0;
+  line-height: inherit;
+  background-color: white;
+  color: #0f172a;
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-serif);
+  font-weight: 700;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* Custom Utility Classes */
+.text-balance {
+  text-wrap: balance;
+}
+
+.bg-government-gradient {
+  background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 50%, #f1f5f9 100%);
+}
+
+.formal-card {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+.formal-button {
+  padding: 1rem 2rem;
+  background-color: #2563eb;
+  color: white;
+  font-weight: 700;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border: none;
+  cursor: pointer;
+}
+
+.formal-button:hover {
+  background-color: #1d4ed8;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Component Classes */
+.project-card {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.project-card:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transform: translateY(-0.25rem);
+}
+
+.stat-card {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
+  padding: 1.5rem;
+  text-align: center;
+  transition: box-shadow 0.3s;
+}
+
+.stat-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.section-heading {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #1e293b;
+  font-family: var(--font-family-serif);
+  margin-bottom: 1rem;
+}
+
+.section-subtitle {
+  color: #475569;
+  font-size: 1.125rem;
+  margin-bottom: 2rem;
+}
+
+/* Line Clamp */
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.8s ease-out;
+}
