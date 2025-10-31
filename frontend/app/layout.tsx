@@ -27,7 +27,15 @@ const lora = Lora({
 export const metadata: Metadata = {
   title: "GIS Solutions for Government Sector | Sri Lanka",
   description:
-    "Professional Geographic Information System solutions for Sri Lankan government organizations",
+    "Professional Geographic Information System solutions for Sri Lankan government organizations and departments",
+  keywords: [
+    "GIS",
+    "Geographic Information Systems",
+    "Sri Lanka",
+    "Government",
+    "Mapping",
+    "Spatial Data",
+  ],
 };
 
 export default function RootLayout({
