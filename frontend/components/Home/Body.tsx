@@ -148,7 +148,7 @@ export function MainContent() {
                 <Link href={project.link}>
                   <Button
                     variant="outline"
-                    className="w-full mt-4 group/btn border-[#8b2635]/30 hover:bg-[#8b2635] hover:text-white"
+                    className="w-full mt-4 group/btn border-[#8b2635]/30 bg-[#8b2635] text-white"
                   >
                     {t.main.viewDetails}
                     <ExternalLink className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />

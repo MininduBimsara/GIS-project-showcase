@@ -34,7 +34,7 @@ export const en = {
         "Try adjusting your search terms or clear the search to see all projects",
       button: "Clear Search",
     },
-    viewDetails: "View Full Details",
+    viewDetails: "Go To Project",
   },
 
   // Statistics Section
