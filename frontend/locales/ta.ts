@@ -119,7 +119,8 @@ export const ta = {
       location: "நாடு முழுவதும்",
       year: "2023-2024",
       status: "completed",
-      imageUrl: "/placeholder-project-1.jpg",
+      imageUrl:
+        "https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&h=600&fit=crop&q=80",
       link: "#",
     },
     {
@@ -131,7 +132,8 @@ export const ta = {
       location: "கொழும்பு, கண்டி, காலி",
       year: "2024",
       status: "ongoing",
-      imageUrl: "/placeholder-project-2.jpg",
+      imageUrl:
+        "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&h=600&fit=crop&q=80",
       link: "#",
     },
     {
@@ -143,7 +145,8 @@ export const ta = {
       location: "அனைத்து மாகாணங்கள்",
       year: "2023-2025",
       status: "ongoing",
-      imageUrl: "/placeholder-project-3.jpg",
+      imageUrl:
+        "https://images.unsplash.com/photo-1547683905-f686c993aae5?w=800&h=600&fit=crop&q=80",
       link: "#",
     },
     {
@@ -155,7 +158,8 @@ export const ta = {
       location: "தேசிய பாதுகாப்பு",
       year: "2022-2024",
       status: "completed",
-      imageUrl: "/placeholder-project-4.jpg",
+      imageUrl:
+        "https://images.unsplash.com/photo-1511497584788-876760111969?w=800&h=600&fit=crop&q=80",
       link: "#",
     },
     {
@@ -167,7 +171,8 @@ export const ta = {
       location: "அனைத்து மாவட்டங்கள்",
       year: "2024-2025",
       status: "in-progress",
-      imageUrl: "/placeholder-project-5.jpg",
+      imageUrl:
+        "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=800&h=600&fit=crop&q=80",
       link: "#",
     },
     {
@@ -179,7 +184,8 @@ export const ta = {
       location: "சுற்றுலா மண்டலங்கள்",
       year: "2024",
       status: "ongoing",
-      imageUrl: "/placeholder-project-6.jpg",
+      imageUrl:
+        "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=600&fit=crop&q=80",
       link: "#",
     },
   ],

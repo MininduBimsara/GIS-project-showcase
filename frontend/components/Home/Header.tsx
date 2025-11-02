@@ -55,7 +55,7 @@ export function Header() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between py-6 gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-[#8b2635] to-[#8b2635]/80 rounded-lg flex items-center justify-center shadow-lg p-2">
+             
                 <Image
                   src="/logo.png"
                   alt="GIS Logo"
@@ -63,7 +63,7 @@ export function Header() {
                   height={50}
                   className="object-contain"
                 />
-              </div>
+              
               <div>
                 <h1 className="text-xl md:text-2xl font-bold text-[#8b2635] font-serif">
                   {t.header.title}

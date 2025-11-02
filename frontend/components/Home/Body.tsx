@@ -100,7 +100,7 @@ export function MainContent() {
           {filteredProjects.map((project, index) => (
             <Card
               key={project.id}
-              className="group overflow-hidden hover:shadow-2xl transition-all duration-500 border-2 border-transparent hover:border-[#8b2635]/20"
+              className="group overflow-hidden hover:shadow-2xl transition-all duration-500 border-2 border-transparent hover:border-[#8b2635]/20 flex flex-col h-full"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               <div className="relative h-52 overflow-hidden">
@@ -128,8 +128,8 @@ export function MainContent() {
                   {project.description}
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
+              <CardContent className="space-y-4 flex flex-col flex-1">
+                <div className="space-y-2 flex-1">
                   <div className="flex items-start gap-2 text-sm">
                     <Building2 className="w-4 h-4 text-[#8b2635] flex-shrink-0 mt-0.5" />
                     <span className="text-slate-600 line-clamp-1">
