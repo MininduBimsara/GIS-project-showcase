@@ -66,7 +66,7 @@ export const si = {
 
   // Footer
   footer: {
-    companyName: "GIS අංශය",
+    companyName: "GIS Solutions පුද්ගලික සමාගම",
     companySubtitle: "ශ්‍රී ලංකා රජය",
     description:
       "ජාතික සංවර්ධනය සහ තිරසාර වර්ධනය සඳහා උසස් භූගෝලීය තොරතුරු පද්ධති සහ අවකාශීය දත්ත විශ්ලේෂණ තුළින් රජයේ තීරණ ගැනීම් බලගන්වන්න.",

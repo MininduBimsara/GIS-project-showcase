@@ -31,7 +31,7 @@ export function Footer() {
           {/* About Section */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-14 h-14 bg-gradient-to-br from-[#8b2635] to-[#6d1f29] rounded-xl flex items-center justify-center p-2 shadow-lg">
+             
                 <Image
                   src="/logo.png"
                   alt="GIS Logo"
@@ -39,7 +39,7 @@ export function Footer() {
                   height={40}
                   className="object-contain"
                 />
-              </div>
+            
               <div>
                 <h3 className="text-2xl font-bold font-serif">
                   {t.footer.companyName}

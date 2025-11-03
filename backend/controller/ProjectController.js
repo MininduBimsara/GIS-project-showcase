@@ -1,52 +1,21 @@
-const fs = require("fs").promises;
-const path = require("path");
-const { v4: uuidv4 } = require("uuid");
+const mongoose = require("mongoose");
+const ProjectEn = require("../models/ProjectEn");
+const ProjectSi = require("../models/ProjectSi");
+const ProjectTa = require("../models/ProjectTa");
+const { translateText } = require("../services/translationService");
 
-const DATA_FILE = path.join(__dirname, "../data/projects.json");
-
-// Helper function to read projects from file
-const readProjects = async () => {
-  try {
-    const data = await fs.readFile(DATA_FILE, "utf8");
-    return JSON.parse(data);
-  } catch (error) {
-    if (error.code === "ENOENT") {
-      // File doesn't exist, create it with empty array
-      await fs.mkdir(path.dirname(DATA_FILE), { recursive: true });
-      await fs.writeFile(DATA_FILE, JSON.stringify([], null, 2));
-      return [];
-    }
-    throw error;
-  }
-};
-
-// Helper function to write projects to file
-const writeProjects = async (projects) => {
-  await fs.writeFile(DATA_FILE, JSON.stringify(projects, null, 2));
-};
-
-// Validation helper
-const validateProject = (project) => {
-  const { title, description, imageUrl, projectUrl } = project;
-  const errors = [];
-
-  if (!title || title.trim().length === 0) {
-    errors.push("Title is required");
-  }
-  if (!description || description.trim().length === 0) {
-    errors.push("Description is required");
-  }
-  if (!imageUrl || imageUrl.trim().length === 0) {
-    errors.push("Image URL is required");
-  }
-
-  return errors;
+const getModelByLang = (lang) => {
+  const l = (lang || "en").toLowerCase();
+  if (l === "si") return ProjectSi;
+  if (l === "ta") return ProjectTa;
+  return ProjectEn;
 };
 
 // GET /api/projects - Get all projects
 exports.getAllProjects = async (req, res) => {
   try {
-    const projects = await readProjects();
+    const Model = getModelByLang(req.query.lang);
+    const projects = await Model.find().populate("createdBy", "name email");
     res.json({
       success: true,
       count: projects.length,
@@ -64,8 +33,11 @@ exports.getAllProjects = async (req, res) => {
 // GET /api/projects/:id - Get single project
 exports.getProjectById = async (req, res) => {
   try {
-    const projects = await readProjects();
-    const project = projects.find((p) => p.id === req.params.id);
+    const Model = getModelByLang(req.query.lang);
+    const project = await Model.findOne({ groupId: req.params.id }).populate(
+      "createdBy",
+      "name email"
+    );
 
     if (!project) {
       return res.status(404).json({
@@ -92,34 +64,63 @@ exports.createProject = async (req, res) => {
   try {
     const { title, description, imageUrl, projectUrl } = req.body;
 
-    // Validate input
-    const errors = validateProject(req.body);
-    if (errors.length > 0) {
+    if (!title || !description || !imageUrl) {
       return res.status(400).json({
         success: false,
-        error: "Validation failed",
-        details: errors,
+        error: "Please provide title, description, and imageUrl",
       });
     }
 
-    const projects = await readProjects();
+    const groupId = new mongoose.Types.ObjectId();
 
-    const newProject = {
-      id: uuidv4(),
-      title: title.trim(),
-      description: description.trim(),
-      imageUrl: imageUrl.trim(),
-      projectUrl: projectUrl ? projectUrl.trim() : "",
-      createdAt: new Date().toISOString(),
-    };
+    // Create English first
+    const en = await ProjectEn.create({
+      groupId,
+      title,
+      description,
+      imageUrl,
+      projectUrl: projectUrl || "",
+      createdBy: req.user.id,
+    });
 
-    projects.push(newProject);
-    await writeProjects(projects);
+    // Translate and create Sinhala & Tamil
+    const [titleSi, descSi] = await Promise.all([
+      translateText(title, "si"),
+      translateText(description, "si"),
+    ]);
+    const [titleTa, descTa] = await Promise.all([
+      translateText(title, "ta"),
+      translateText(description, "ta"),
+    ]);
+
+    await Promise.all([
+      ProjectSi.create({
+        groupId,
+        title: titleSi,
+        description: descSi,
+        imageUrl,
+        projectUrl: projectUrl || "",
+        createdBy: req.user.id,
+      }),
+      ProjectTa.create({
+        groupId,
+        title: titleTa,
+        description: descTa,
+        imageUrl,
+        projectUrl: projectUrl || "",
+        createdBy: req.user.id,
+      }),
+    ]);
+
+    const populatedEn = await ProjectEn.findById(en._id).populate(
+      "createdBy",
+      "name email"
+    );
 
     res.status(201).json({
       success: true,
       message: "Project created successfully",
-      data: newProject,
+      data: { groupId, project: populatedEn },
     });
   } catch (error) {
     res.status(500).json({
@@ -134,43 +135,82 @@ exports.createProject = async (req, res) => {
 exports.updateProject = async (req, res) => {
   try {
     const { title, description, imageUrl, projectUrl } = req.body;
+    const groupId = req.params.id;
 
-    // Validate input
-    const errors = validateProject(req.body);
-    if (errors.length > 0) {
-      return res.status(400).json({
-        success: false,
-        error: "Validation failed",
-        details: errors,
-      });
+    const en = await ProjectEn.findOne({ groupId });
+    if (!en) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Project not found" });
     }
 
-    const projects = await readProjects();
-    const projectIndex = projects.findIndex((p) => p.id === req.params.id);
+    // Update EN
+    if (title !== undefined) en.title = title;
+    if (description !== undefined) en.description = description;
+    if (imageUrl !== undefined) en.imageUrl = imageUrl;
+    if (projectUrl !== undefined) en.projectUrl = projectUrl;
+    await en.save();
 
-    if (projectIndex === -1) {
-      return res.status(404).json({
-        success: false,
-        error: "Project not found",
-      });
+    // Re-translate if title/description changed
+    if (title !== undefined || description !== undefined) {
+      const [titleSi, descSi] = await Promise.all([
+        translateText(en.title, "si"),
+        translateText(en.description, "si"),
+      ]);
+      const [titleTa, descTa] = await Promise.all([
+        translateText(en.title, "ta"),
+        translateText(en.description, "ta"),
+      ]);
+
+      await Promise.all([
+        ProjectSi.findOneAndUpdate(
+          { groupId },
+          {
+            title: titleSi,
+            description: descSi,
+            ...(imageUrl !== undefined ? { imageUrl } : {}),
+            ...(projectUrl !== undefined ? { projectUrl } : {}),
+          }
+        ),
+        ProjectTa.findOneAndUpdate(
+          { groupId },
+          {
+            title: titleTa,
+            description: descTa,
+            ...(imageUrl !== undefined ? { imageUrl } : {}),
+            ...(projectUrl !== undefined ? { projectUrl } : {}),
+          }
+        ),
+      ]);
+    } else if (imageUrl !== undefined || projectUrl !== undefined) {
+      // Only propagate non-text fields
+      await Promise.all([
+        ProjectSi.findOneAndUpdate(
+          { groupId },
+          {
+            ...(imageUrl !== undefined ? { imageUrl } : {}),
+            ...(projectUrl !== undefined ? { projectUrl } : {}),
+          }
+        ),
+        ProjectTa.findOneAndUpdate(
+          { groupId },
+          {
+            ...(imageUrl !== undefined ? { imageUrl } : {}),
+            ...(projectUrl !== undefined ? { projectUrl } : {}),
+          }
+        ),
+      ]);
     }
 
-    const updatedProject = {
-      ...projects[projectIndex],
-      title: title.trim(),
-      description: description.trim(),
-      imageUrl: imageUrl.trim(),
-      projectUrl: projectUrl ? projectUrl.trim() : "",
-      updatedAt: new Date().toISOString(),
-    };
-
-    projects[projectIndex] = updatedProject;
-    await writeProjects(projects);
+    const updated = await ProjectEn.findOne({ groupId }).populate(
+      "createdBy",
+      "name email"
+    );
 
     res.json({
       success: true,
       message: "Project updated successfully",
-      data: updatedProject,
+      data: updated,
     });
   } catch (error) {
     res.status(500).json({
@@ -184,24 +224,24 @@ exports.updateProject = async (req, res) => {
 // DELETE /api/projects/:id - Delete project
 exports.deleteProject = async (req, res) => {
   try {
-    const projects = await readProjects();
-    const projectIndex = projects.findIndex((p) => p.id === req.params.id);
-
-    if (projectIndex === -1) {
-      return res.status(404).json({
-        success: false,
-        error: "Project not found",
-      });
+    const groupId = req.params.id;
+    const en = await ProjectEn.findOne({ groupId });
+    if (!en) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Project not found" });
     }
 
-    const deletedProject = projects[projectIndex];
-    projects.splice(projectIndex, 1);
-    await writeProjects(projects);
+    await Promise.all([
+      ProjectEn.deleteOne({ groupId }),
+      ProjectSi.deleteOne({ groupId }),
+      ProjectTa.deleteOne({ groupId }),
+    ]);
 
     res.json({
       success: true,
       message: "Project deleted successfully",
-      data: deletedProject,
+      data: { groupId },
     });
   } catch (error) {
     res.status(500).json({

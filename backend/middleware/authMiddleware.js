@@ -1,7 +1,24 @@
-const authMiddleware = (req, res, next) => {
-  const token = req.headers.authorization;
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 
-  // Check if token exists
+const authMiddleware = async (req, res, next) => {
+  let token;
+
+  // Prefer cookie-based token
+  if (req.cookies && req.cookies.token) {
+    token = req.cookies.token;
+  }
+
+  // Fallback to Authorization header (Bearer <token>)
+  if (
+    !token &&
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
+
+  // Make sure token exists
   if (!token) {
     return res.status(401).json({
       success: false,
@@ -9,20 +26,27 @@ const authMiddleware = (req, res, next) => {
     });
   }
 
-  // Extract token (format: "Bearer <token>")
-  const bearerToken = token.startsWith("Bearer ") ? token.slice(7) : token;
+  try {
+    // Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-  // Validate against environment variable
-  const validToken = process.env.ADMIN_TOKEN || "your-secret-admin-token";
+    // Get user from token
+    req.user = await User.findById(decoded.id);
 
-  if (bearerToken !== validToken) {
-    return res.status(403).json({
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        error: "User not found",
+      });
+    }
+
+    next();
+  } catch (error) {
+    return res.status(401).json({
       success: false,
-      error: "Access denied. Invalid token.",
+      error: "Not authorized, token failed",
     });
   }
-
-  next();
 };
 
 module.exports = authMiddleware;

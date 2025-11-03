@@ -66,7 +66,7 @@ export const en = {
 
   // Footer
   footer: {
-    companyName: "GIS Division",
+    companyName: "GIS Solutions Private Limited",
     companySubtitle: "Government of Sri Lanka",
     description:
       "Empowering government decision-making through advanced geographic information systems and spatial data analytics for national development and sustainable growth.",
