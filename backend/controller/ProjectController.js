@@ -62,12 +62,30 @@ exports.getProjectById = async (req, res) => {
 // POST /api/projects - Create new project
 exports.createProject = async (req, res) => {
   try {
-    const { title, description, imageUrl, projectUrl } = req.body;
+    const {
+      title,
+      description,
+      imageUrl,
+      projectUrl,
+      department,
+      location,
+      year,
+      status,
+    } = req.body;
 
-    if (!title || !description || !imageUrl) {
+    if (
+      !title ||
+      !description ||
+      !imageUrl ||
+      !department ||
+      !location ||
+      !year ||
+      !status
+    ) {
       return res.status(400).json({
         success: false,
-        error: "Please provide title, description, and imageUrl",
+        error:
+          "Please provide title, description, imageUrl, department, location, year, and status",
       });
     }
 
@@ -80,17 +98,23 @@ exports.createProject = async (req, res) => {
       description,
       imageUrl,
       projectUrl: projectUrl || "",
+      department,
+      location,
+      year,
+      status,
       createdBy: req.user.id,
     });
 
-    // Translate and create Sinhala & Tamil
-    const [titleSi, descSi] = await Promise.all([
+    // Translate and create Sinhala & Tamil (including department)
+    const [titleSi, descSi, deptSi] = await Promise.all([
       translateText(title, "si"),
       translateText(description, "si"),
+      translateText(department, "si"),
     ]);
-    const [titleTa, descTa] = await Promise.all([
+    const [titleTa, descTa, deptTa] = await Promise.all([
       translateText(title, "ta"),
       translateText(description, "ta"),
+      translateText(department, "ta"),
     ]);
 
     await Promise.all([
@@ -100,6 +124,10 @@ exports.createProject = async (req, res) => {
         description: descSi,
         imageUrl,
         projectUrl: projectUrl || "",
+        department: deptSi,
+        location,
+        year,
+        status,
         createdBy: req.user.id,
       }),
       ProjectTa.create({
@@ -108,6 +136,10 @@ exports.createProject = async (req, res) => {
         description: descTa,
         imageUrl,
         projectUrl: projectUrl || "",
+        department: deptTa,
+        location,
+        year,
+        status,
         createdBy: req.user.id,
       }),
     ]);
@@ -134,7 +166,16 @@ exports.createProject = async (req, res) => {
 // PUT /api/projects/:id - Update project
 exports.updateProject = async (req, res) => {
   try {
-    const { title, description, imageUrl, projectUrl } = req.body;
+    const {
+      title,
+      description,
+      imageUrl,
+      projectUrl,
+      department,
+      location,
+      year,
+      status,
+    } = req.body;
     const groupId = req.params.id;
 
     const en = await ProjectEn.findOne({ groupId });
@@ -149,17 +190,27 @@ exports.updateProject = async (req, res) => {
     if (description !== undefined) en.description = description;
     if (imageUrl !== undefined) en.imageUrl = imageUrl;
     if (projectUrl !== undefined) en.projectUrl = projectUrl;
+    if (department !== undefined) en.department = department;
+    if (location !== undefined) en.location = location;
+    if (year !== undefined) en.year = year;
+    if (status !== undefined) en.status = status;
     await en.save();
 
-    // Re-translate if title/description changed
-    if (title !== undefined || description !== undefined) {
-      const [titleSi, descSi] = await Promise.all([
+    // Re-translate if title/description/department changed
+    if (
+      title !== undefined ||
+      description !== undefined ||
+      department !== undefined
+    ) {
+      const [titleSi, descSi, deptSi] = await Promise.all([
         translateText(en.title, "si"),
         translateText(en.description, "si"),
+        translateText(en.department, "si"),
       ]);
-      const [titleTa, descTa] = await Promise.all([
+      const [titleTa, descTa, deptTa] = await Promise.all([
         translateText(en.title, "ta"),
         translateText(en.description, "ta"),
+        translateText(en.department, "ta"),
       ]);
 
       await Promise.all([
@@ -168,8 +219,12 @@ exports.updateProject = async (req, res) => {
           {
             title: titleSi,
             description: descSi,
+            department: deptSi,
             ...(imageUrl !== undefined ? { imageUrl } : {}),
             ...(projectUrl !== undefined ? { projectUrl } : {}),
+            ...(location !== undefined ? { location } : {}),
+            ...(year !== undefined ? { year } : {}),
+            ...(status !== undefined ? { status } : {}),
           }
         ),
         ProjectTa.findOneAndUpdate(
@@ -177,12 +232,23 @@ exports.updateProject = async (req, res) => {
           {
             title: titleTa,
             description: descTa,
+            department: deptTa,
             ...(imageUrl !== undefined ? { imageUrl } : {}),
             ...(projectUrl !== undefined ? { projectUrl } : {}),
+            ...(location !== undefined ? { location } : {}),
+            ...(year !== undefined ? { year } : {}),
+            ...(status !== undefined ? { status } : {}),
           }
         ),
       ]);
-    } else if (imageUrl !== undefined || projectUrl !== undefined) {
+    } else if (
+      imageUrl !== undefined ||
+      projectUrl !== undefined ||
+      department !== undefined ||
+      location !== undefined ||
+      year !== undefined ||
+      status !== undefined
+    ) {
       // Only propagate non-text fields
       await Promise.all([
         ProjectSi.findOneAndUpdate(
@@ -190,6 +256,10 @@ exports.updateProject = async (req, res) => {
           {
             ...(imageUrl !== undefined ? { imageUrl } : {}),
             ...(projectUrl !== undefined ? { projectUrl } : {}),
+            ...(department !== undefined ? { department } : {}),
+            ...(location !== undefined ? { location } : {}),
+            ...(year !== undefined ? { year } : {}),
+            ...(status !== undefined ? { status } : {}),
           }
         ),
         ProjectTa.findOneAndUpdate(
@@ -197,6 +267,10 @@ exports.updateProject = async (req, res) => {
           {
             ...(imageUrl !== undefined ? { imageUrl } : {}),
             ...(projectUrl !== undefined ? { projectUrl } : {}),
+            ...(department !== undefined ? { department } : {}),
+            ...(location !== undefined ? { location } : {}),
+            ...(year !== undefined ? { year } : {}),
+            ...(status !== undefined ? { status } : {}),
           }
         ),
       ]);
