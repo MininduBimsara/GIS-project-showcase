@@ -25,7 +25,7 @@ const lora = Lora({
 });
 
 export const metadata: Metadata = {
-  title: "GIS Solutions for Government Sector | Sri Lanka",
+  title: "GIS for Sri Lankan Government",
   description:
     "Professional Geographic Information System solutions for Sri Lankan government organizations and departments",
   keywords: [
@@ -45,6 +45,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/logo.png" type="image/png" />
+        {/* ...other head tags if needed... */}
+      </head>
       <body
         className={`${inter.variable} ${merriweather.variable} ${lora.variable} font-sans antialiased`}
       >

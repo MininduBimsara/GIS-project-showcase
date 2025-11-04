@@ -10,15 +10,15 @@ export function Header() {
 
   return (
     <>
-      {/* Top Strip */}
-      <div className="bg-gradient-to-r from-[#8b2635] to-[#8b2635]/80 text-white py-3">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center text-sm">
-            <div className="flex gap-6">
+      {/* Top Strip - Fixed and Responsive */}
+      <div className="fixed top-0 left-0 w-full z-50 bg-gradient-to-r from-[#8b2635] to-[#8b2635]/80 text-white py-2 md:py-3">
+        <div className="container mx-auto px-2 md:px-4">
+          <div className="flex flex-wrap justify-between items-center text-xs md:text-sm gap-2">
+            <div className="flex flex-wrap gap-2 md:gap-6">
               <span>📧 {t.header.email}</span>
               <span>📞 {t.header.phone}</span>
             </div>
-            <div className="flex gap-4">
+            <div className="flex gap-2 md:gap-4">
               <button
                 onClick={() => setLanguage("en")}
                 className={`hover:text-[#fbbf24] transition-colors ${
@@ -50,20 +50,19 @@ export function Header() {
         </div>
       </div>
 
-      {/* Header */}
-      <header className="bg-white shadow-md sticky top-0 z-50">
+      {/* Header - flush with Top Strip */}
+      <header className="bg-white shadow-md sticky top-[32px] md:top-[44px] z-40">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between py-6 gap-4">
             <div className="flex items-center gap-4">
-             
-                <Image
-                  src="/logo.png"
-                  alt="GIS Logo"
-                  width={50}
-                  height={50}
-                  className="object-contain"
-                />
-              
+              <Image
+                src="/logo.png"
+                alt="GIS Logo"
+                width={50}
+                height={50}
+                className="object-contain"
+              />
+
               <div>
                 <h1 className="text-xl md:text-2xl font-bold text-[#8b2635] font-serif">
                   {t.header.title}
