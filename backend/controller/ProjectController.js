@@ -11,6 +11,28 @@ const getModelByLang = (lang) => {
   return ProjectEn;
 };
 
+// ✅ Safe translation helper with fallback
+const safeTranslate = async (text, lang) => {
+  try {
+    if (!text) return text;
+    const translated = await translateText(text, lang);
+    if (
+      !translated ||
+      typeof translated !== "string" ||
+      translated.trim() === ""
+    ) {
+      console.warn(
+        `⚠️ Translation for ${lang} returned empty or invalid. Using fallback.`
+      );
+      return text; // fallback to English
+    }
+    return translated;
+  } catch (err) {
+    console.error(`⚠️ Translation failed for ${lang}:`, err.message);
+    return text; // fallback to English
+  }
+};
+
 // GET /api/projects - Get all projects
 exports.getAllProjects = async (req, res) => {
   try {
@@ -91,7 +113,7 @@ exports.createProject = async (req, res) => {
 
     const groupId = new mongoose.Types.ObjectId();
 
-    // Create English first
+    // Create English version
     const en = await ProjectEn.create({
       groupId,
       title,
@@ -105,18 +127,19 @@ exports.createProject = async (req, res) => {
       createdBy: req.user.id,
     });
 
-    // Translate and create Sinhala & Tamil (including department)
+    // ✅ Use safeTranslate with fallback
     const [titleSi, descSi, deptSi] = await Promise.all([
-      translateText(title, "si"),
-      translateText(description, "si"),
-      translateText(department, "si"),
+      safeTranslate(title, "si"),
+      safeTranslate(description, "si"),
+      safeTranslate(department, "si"),
     ]);
     const [titleTa, descTa, deptTa] = await Promise.all([
-      translateText(title, "ta"),
-      translateText(description, "ta"),
-      translateText(department, "ta"),
+      safeTranslate(title, "ta"),
+      safeTranslate(description, "ta"),
+      safeTranslate(department, "ta"),
     ]);
 
+    // Create Sinhala and Tamil versions
     await Promise.all([
       ProjectSi.create({
         groupId,
@@ -155,6 +178,7 @@ exports.createProject = async (req, res) => {
       data: { groupId, project: populatedEn },
     });
   } catch (error) {
+    console.error("❌ Project creation failed:", error);
     res.status(500).json({
       success: false,
       error: "Failed to create project",
@@ -196,21 +220,21 @@ exports.updateProject = async (req, res) => {
     if (status !== undefined) en.status = status;
     await en.save();
 
-    // Re-translate if title/description/department changed
+    // ✅ Re-translate safely
     if (
       title !== undefined ||
       description !== undefined ||
       department !== undefined
     ) {
       const [titleSi, descSi, deptSi] = await Promise.all([
-        translateText(en.title, "si"),
-        translateText(en.description, "si"),
-        translateText(en.department, "si"),
+        safeTranslate(en.title, "si"),
+        safeTranslate(en.description, "si"),
+        safeTranslate(en.department, "si"),
       ]);
       const [titleTa, descTa, deptTa] = await Promise.all([
-        translateText(en.title, "ta"),
-        translateText(en.description, "ta"),
-        translateText(en.department, "ta"),
+        safeTranslate(en.title, "ta"),
+        safeTranslate(en.description, "ta"),
+        safeTranslate(en.department, "ta"),
       ]);
 
       await Promise.all([
@@ -241,14 +265,7 @@ exports.updateProject = async (req, res) => {
           }
         ),
       ]);
-    } else if (
-      imageUrl !== undefined ||
-      projectUrl !== undefined ||
-      department !== undefined ||
-      location !== undefined ||
-      year !== undefined ||
-      status !== undefined
-    ) {
+    } else {
       // Only propagate non-text fields
       await Promise.all([
         ProjectSi.findOneAndUpdate(
@@ -287,6 +304,7 @@ exports.updateProject = async (req, res) => {
       data: updated,
     });
   } catch (error) {
+    console.error("❌ Project update failed:", error);
     res.status(500).json({
       success: false,
       error: "Failed to update project",
@@ -318,6 +336,7 @@ exports.deleteProject = async (req, res) => {
       data: { groupId },
     });
   } catch (error) {
+    console.error("❌ Project deletion failed:", error);
     res.status(500).json({
       success: false,
       error: "Failed to delete project",

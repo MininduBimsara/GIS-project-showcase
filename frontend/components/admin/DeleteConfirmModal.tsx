@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle } from "lucide-react";
@@ -17,9 +18,26 @@ export function DeleteConfirmModal({
   onCancel,
   isLoading,
 }: DeleteConfirmModalProps) {
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (isLoading) return;
+      if (e.key === "Escape") onCancel();
+    }
+
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [isLoading, onCancel]);
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <Card className="w-full max-w-md">
+    <div
+      className="fixed inset-0 bg-transparent bg-opacity-100 flex items-center justify-center p-4 z-50"
+      onMouseDown={(e) => {
+        // Only trigger when clicking the overlay itself (not the card)
+        if (isLoading) return;
+        if (e.target === e.currentTarget) onCancel();
+      }}
+    >
+      <Card className="w-full max-w-md bg-white">
         <CardHeader>
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
@@ -31,7 +49,7 @@ export function DeleteConfirmModal({
         <CardContent className="space-y-4">
           <p className="text-gov-gray-700">
             Are you sure you want to delete{" "}
-            <span className="font-semibold">"{projectTitle}"</span>?
+            <span className="font-semibold">&quot;{projectTitle}&quot;</span>?
           </p>
           <div className="bg-red-50 border border-red-200 rounded-md p-3">
             <p className="text-sm text-red-800">
@@ -45,7 +63,7 @@ export function DeleteConfirmModal({
               variant="outline"
               onClick={onCancel}
               disabled={isLoading}
-              className="flex-1"
+              className="flex-1 hover:bg-gov-gray-100"
             >
               Cancel
             </Button>
@@ -53,7 +71,7 @@ export function DeleteConfirmModal({
               variant="destructive"
               onClick={onConfirm}
               disabled={isLoading}
-              className="flex-1"
+              className="flex-1 text-red-700 hover:bg-red-100"
             >
               {isLoading ? "Deleting..." : "Delete Project"}
             </Button>

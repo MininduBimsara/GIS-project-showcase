@@ -93,14 +93,23 @@ export function ProjectForm({
     }
 
     try {
-      await onSubmit(formData);
+      // FIX: Removed the unnecessary conversion logic.
+      // The formData object already has the correct status
+      // from the <select> element.
+      const payload: Partial<Project> = {
+        ...formData,
+      };
+
+      await onSubmit(payload);
     } catch (error) {
       console.error("Form submission error:", error);
     }
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -112,7 +121,7 @@ export function ProjectForm({
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-      <Card className="w-full max-w-2xl my-8">
+      <Card className="w-full max-w-2xl my-8 bg-white">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-2xl font-serif">
@@ -262,7 +271,6 @@ export function ProjectForm({
                 >
                   <option value="planned">Planned</option>
                   <option value="in-progress">In Progress</option>
-                  <option value="ongoing">Ongoing</option>
                   <option value="completed">Completed</option>
                 </select>
               </div>

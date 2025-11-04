@@ -97,8 +97,20 @@ export async function adminCreateProject(
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || "Failed to create project");
+      if (response.status === 401 || response.status === 403) {
+        throw new Error("Not authorized. Please log in as admin.");
+      }
+      let message = `Failed to create project (HTTP ${response.status})`;
+      try {
+        const error = await response.json();
+        message = error.message || error.error || message;
+      } catch {
+        try {
+          const text = await response.text();
+          if (text) message = `${message}: ${text}`;
+        } catch {}
+      }
+      throw new Error(message);
     }
 
     const result: ApiResponse<{ groupId: string; project: Project }> =

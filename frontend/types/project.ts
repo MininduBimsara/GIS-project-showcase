@@ -8,7 +8,7 @@ export interface Project {
   department: string;
   location: string;
   year: string;
-  status: "completed" | "ongoing" | "in-progress" | "planned";
+  status: "completed" | "in-progress" | "planned";
   createdBy?: {
     _id: string;
     name: string;
@@ -29,7 +29,6 @@ export interface ApiResponse<T> {
 export interface ProjectStats {
   total: number;
   completed: number;
-  ongoing: number;
   inProgress: number;
   planned: number;
 }

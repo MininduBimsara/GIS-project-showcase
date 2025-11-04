@@ -14,7 +14,7 @@ const projectSchema = new mongoose.Schema(
       trim: true,
       minlength: 3,
       maxlength: 200,
-      match: /^[\w\s\-&,\.()]+$/u,
+
     },
     description: {
       type: String,
