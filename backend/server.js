@@ -6,6 +6,7 @@ const connectDB = require("./config/database");
 
 const projectRoutes = require("./routes/ProjectRoutes");
 const authRoutes = require("./routes/AuthRoutes");
+const adminRoutes = require("./routes/AdminRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -29,6 +30,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
+app.use("/api/admin", adminRoutes); // Admin routes for future admin panel
 
 // Health check endpoint
 app.get("/health", (req, res) => {

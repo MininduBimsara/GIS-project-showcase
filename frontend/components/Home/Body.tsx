@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -18,23 +18,51 @@ import {
   Building2,
   Search,
   X,
+  Loader2,
+  AlertCircle,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useLanguage } from "@/Context/Languagecontext";
+import { fetchProjects } from "@/lib/api";
+import { Project } from "@/types/project";
 
 export function MainContent() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch projects when language changes
+  useEffect(() => {
+    const loadProjects = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await fetchProjects(language);
+        setProjects(data);
+      } catch (err) {
+        console.error("Failed to load projects:", err);
+        setError(
+          err instanceof Error ? err.message : "Failed to load projects"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProjects();
+  }, [language]);
 
   // Filter projects based on search query
   const filteredProjects = useMemo(() => {
     if (!searchQuery.trim()) {
-      return t.projects;
+      return projects;
     }
 
     const query = searchQuery.toLowerCase();
-    return t.projects.filter(
+    return projects.filter(
       (project) =>
         project.title.toLowerCase().includes(query) ||
         project.description.toLowerCase().includes(query) ||
@@ -43,7 +71,7 @@ export function MainContent() {
         project.year.toLowerCase().includes(query) ||
         project.status.toLowerCase().includes(query)
     );
-  }, [searchQuery, t.projects]);
+  }, [searchQuery, projects]);
 
   const clearSearch = () => {
     setSearchQuery("");
@@ -83,7 +111,7 @@ export function MainContent() {
             </button>
           )}
         </div>
-        {searchQuery && (
+        {searchQuery && !loading && (
           <p className="mt-3 text-sm text-slate-600 text-center">
             {t.main.searchResults} {filteredProjects.length}{" "}
             {filteredProjects.length !== 1
@@ -94,12 +122,38 @@ export function MainContent() {
         )}
       </div>
 
+      {/* Loading State */}
+      {loading && (
+        <div className="flex flex-col items-center justify-center py-20">
+          <Loader2 className="w-12 h-12 text-[#8b2635] animate-spin mb-4" />
+          <p className="text-slate-600">Loading projects...</p>
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && !loading && (
+        <div className="flex flex-col items-center justify-center py-20">
+          <AlertCircle className="w-16 h-16 text-red-500 mb-4" />
+          <h3 className="text-2xl font-bold text-slate-700 mb-2">
+            Failed to Load Projects
+          </h3>
+          <p className="text-slate-500 mb-6">{error}</p>
+          <Button
+            onClick={() => window.location.reload()}
+            variant="outline"
+            className="border-[#8b2635] text-[#8b2635] hover:bg-[#8b2635] hover:text-white"
+          >
+            Retry
+          </Button>
+        </div>
+      )}
+
       {/* Projects Grid */}
-      {filteredProjects.length > 0 ? (
+      {!loading && !error && filteredProjects.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProjects.map((project, index) => (
             <Card
-              key={project.id}
+              key={project._id}
               className="group overflow-hidden hover:shadow-2xl transition-all duration-500 border-2 border-transparent hover:border-[#8b2635]/20 flex flex-col h-full"
               style={{ animationDelay: `${index * 100}ms` }}
             >
@@ -145,7 +199,7 @@ export function MainContent() {
                     <span>{project.year}</span>
                   </div>
                 </div>
-                <Link href={project.link}>
+                <Link href={project.projectUrl || "#"}>
                   <Button
                     variant="outline"
                     className="w-full mt-4 group/btn border-[#8b2635]/30 bg-[#8b2635] text-white"
@@ -158,7 +212,10 @@ export function MainContent() {
             </Card>
           ))}
         </div>
-      ) : (
+      )}
+
+      {/* No Results State */}
+      {!loading && !error && filteredProjects.length === 0 && (
         <div className="text-center py-16">
           <div className="mb-4">
             <Search className="w-16 h-16 text-slate-300 mx-auto" />
