@@ -38,42 +38,65 @@ export function MainContent() {
 
   // Fetch projects when language changes, with localStorage caching for first 6
   useEffect(() => {
-    const cached = localStorage.getItem("cachedFirst6Projects");
-    if (cached) {
+    let cancelled = false;
+    const CACHE_KEY = `cachedFirst6Projects:${language}`;
+
+    const readCache = (): Project[] | null => {
       try {
-        const parsed = JSON.parse(cached);
-        setProjects(parsed);
-        setCurrentPage(1);
-        setLoading(false);
-        return;
-      } catch (e) {
-        // If parsing fails, fallback to API
-      }
-    }
-    const loadProjects = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await fetchProjects(language);
-        setProjects(data);
-        setCurrentPage(1); // Reset to first page on language change
-        // Cache the first 6 projects
-        if (Array.isArray(data) && data.length > 0) {
-          localStorage.setItem(
-            "cachedFirst6Projects",
-            JSON.stringify(data.slice(0, 6))
-          );
-        }
-      } catch (err) {
-        console.error("Failed to load projects:", err);
-        setError(
-          err instanceof Error ? err.message : "Failed to load projects"
-        );
-      } finally {
-        setLoading(false);
+        const raw = localStorage.getItem(CACHE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? (parsed as Project[]) : null;
+      } catch {
+        return null;
       }
     };
-    loadProjects();
+
+    const writeCache = (list: Project[]) => {
+      try {
+        const firstSix = Array.isArray(list) ? list.slice(0, 6) : [];
+        localStorage.setItem(CACHE_KEY, JSON.stringify(firstSix));
+      } catch {
+        // ignore quota/serialization errors
+      }
+    };
+
+    // 1) Try to paint from cache quickly
+    const cached = readCache();
+    if (cached && cached.length) {
+      setProjects(cached);
+      setCurrentPage(1);
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
+
+    // 2) Always fetch latest in background and refresh state + cache
+    const fetchAll = async () => {
+      try {
+        setError(null);
+        const data = await fetchProjects(language);
+        if (cancelled) return;
+        setProjects(data);
+        setCurrentPage(1);
+        writeCache(data);
+      } catch (err) {
+        if (cancelled) return;
+        console.error("Failed to load projects:", err);
+        if (!cached) {
+          setError(
+            err instanceof Error ? err.message : "Failed to load projects"
+          );
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    fetchAll();
+    return () => {
+      cancelled = true;
+    };
   }, [language]);
 
   // Filter projects based on search query
