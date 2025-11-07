@@ -36,8 +36,20 @@ export function MainContent() {
   const [currentPage, setCurrentPage] = useState(1);
   const PROJECTS_PER_PAGE = 6;
 
-  // Fetch projects when language changes
+  // Fetch projects when language changes, with localStorage caching for first 6
   useEffect(() => {
+    const cached = localStorage.getItem("cachedFirst6Projects");
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        setProjects(parsed);
+        setCurrentPage(1);
+        setLoading(false);
+        return;
+      } catch (e) {
+        // If parsing fails, fallback to API
+      }
+    }
     const loadProjects = async () => {
       try {
         setLoading(true);
@@ -45,6 +57,13 @@ export function MainContent() {
         const data = await fetchProjects(language);
         setProjects(data);
         setCurrentPage(1); // Reset to first page on language change
+        // Cache the first 6 projects
+        if (Array.isArray(data) && data.length > 0) {
+          localStorage.setItem(
+            "cachedFirst6Projects",
+            JSON.stringify(data.slice(0, 6))
+          );
+        }
       } catch (err) {
         console.error("Failed to load projects:", err);
         setError(
@@ -54,7 +73,6 @@ export function MainContent() {
         setLoading(false);
       }
     };
-
     loadProjects();
   }, [language]);
 

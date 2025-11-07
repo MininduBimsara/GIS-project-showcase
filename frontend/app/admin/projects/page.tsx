@@ -49,7 +49,20 @@ export default function AdminProjects() {
 
   useEffect(() => {
     if (token) {
-      loadProjects();
+      // Try to load cached projects from localStorage
+      const cached = localStorage.getItem("cachedFirst6Projects");
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          setProjects(parsed);
+          setIsLoading(false);
+        } catch (e) {
+          // If parsing fails, fallback to API
+          loadProjects();
+        }
+      } else {
+        loadProjects();
+      }
     }
   }, [token]);
 
@@ -62,6 +75,13 @@ export default function AdminProjects() {
       setIsLoading(true);
       const data = await adminGetProjects(token!, "en");
       setProjects(data);
+      // Cache the first 6 projects in localStorage
+      if (Array.isArray(data) && data.length > 0) {
+        localStorage.setItem(
+          "cachedFirst6Projects",
+          JSON.stringify(data.slice(0, 6))
+        );
+      }
     } catch (error) {
       console.error("Failed to load projects:", error);
     } finally {
@@ -105,6 +125,13 @@ export default function AdminProjects() {
       setIsSubmitting(true);
       await adminCreateProject(token!, data);
       await loadProjects();
+      // Update cache after create
+      if (projects.length > 0) {
+        localStorage.setItem(
+          "cachedFirst6Projects",
+          JSON.stringify(projects.slice(0, 6))
+        );
+      }
       setShowForm(false);
       setEditingProject(undefined);
     } catch (error) {
@@ -122,6 +149,13 @@ export default function AdminProjects() {
       setIsSubmitting(true);
       await adminUpdateProject(token!, editingProject.groupId, data);
       await loadProjects();
+      // Update cache after update
+      if (projects.length > 0) {
+        localStorage.setItem(
+          "cachedFirst6Projects",
+          JSON.stringify(projects.slice(0, 6))
+        );
+      }
       setShowForm(false);
       setEditingProject(undefined);
     } catch (error) {
@@ -139,6 +173,13 @@ export default function AdminProjects() {
       setIsDeleting(true);
       await adminDeleteProject(token!, deletingProject.groupId);
       await loadProjects();
+      // Update cache after delete
+      if (projects.length > 0) {
+        localStorage.setItem(
+          "cachedFirst6Projects",
+          JSON.stringify(projects.slice(0, 6))
+        );
+      }
       setShowDeleteModal(false);
       setDeletingProject(undefined);
     } catch (error) {
@@ -323,7 +364,7 @@ export default function AdminProjects() {
                       <img
                         src={project.imageUrl}
                         alt={project.title}
-                        className="w-32 h-32 object-cover rounded flex-shrink-0"
+                        className="w-32 h-32 object-cover rounded shrink-0"
                       />
 
                       {/* Project Details */}
