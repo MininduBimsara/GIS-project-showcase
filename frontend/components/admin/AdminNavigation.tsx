@@ -36,7 +36,7 @@ export function AdminNavigation() {
           variant="outline"
           size="icon"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="bg-white shadow-md"
+          className="bg-white shadow-lg hover:shadow-xl"
         >
           {isMobileMenuOpen ? (
             <X className="h-5 w-5" />
@@ -49,8 +49,8 @@ export function AdminNavigation() {
       {/* Sidebar */}
       <aside
         className={`
-        fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gov-gray-200 
-        transform transition-transform duration-200 ease-in-out
+        fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gov-gray-200 shadow-lg
+        transform transition-transform duration-300 ease-in-out
         lg:translate-x-0
         ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
       `}

@@ -120,11 +120,11 @@ export function ProjectForm({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-      <Card className="w-full max-w-2xl my-8 bg-white">
-        <CardHeader>
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50 overflow-y-auto">
+      <Card className="w-full max-w-2xl my-4 sm:my-8 bg-white max-h-[95vh] overflow-y-auto">
+        <CardHeader className="sticky top-0 bg-white z-10 border-b">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-2xl font-serif">
+            <CardTitle className="text-xl sm:text-2xl font-serif">
               {project ? "Edit Project" : "Add New Project"}
             </CardTitle>
             <Button
@@ -230,7 +230,7 @@ export function ProjectForm({
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Year */}
               <div>
                 <label
@@ -267,7 +267,7 @@ export function ProjectForm({
                   value={formData.status}
                   onChange={handleChange}
                   disabled={isLoading}
-                  className="w-full h-9 px-3 py-1 border border-gov-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gov-maroon-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                  className="w-full h-10 px-3 py-2 border border-gov-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gov-maroon-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                 >
                   <option value="planned">Planned</option>
                   <option value="in-progress">In Progress</option>
@@ -331,11 +331,11 @@ export function ProjectForm({
             </div>
 
             {/* Form Actions */}
-            <div className="flex gap-3 pt-4">
+            <div className="flex flex-col sm:flex-row gap-3 pt-4">
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 bg-gov-maroon-500 hover:bg-gov-maroon-600"
+                className="flex-1 bg-gov-maroon-500 hover:bg-gov-maroon-600 w-full sm:w-auto"
               >
                 {isLoading
                   ? "Saving..."
@@ -348,7 +348,7 @@ export function ProjectForm({
                 variant="outline"
                 onClick={onCancel}
                 disabled={isLoading}
-                className="flex-1"
+                className="flex-1 w-full sm:w-auto"
               >
                 Cancel
               </Button>

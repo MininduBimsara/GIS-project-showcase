@@ -224,12 +224,12 @@ export default function AdminProjects() {
 
   return (
     <ProtectedRoute>
-      <div className="flex flex-col md:flex-row">
+      <div className="flex">
         <AdminNavigation />
 
-        <main className="flex-1 p-2 sm:p-4 lg:p-8">
+        <main className="flex-1 lg:ml-64 p-4 md:p-6 lg:p-8 pt-20 lg:pt-8">
           {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 md:mb-8 text-center sm:text-left">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 md:mb-8">
             <div>
               <h1 className="text-2xl md:text-3xl font-serif font-bold text-gov-gray-900">
                 Projects
@@ -249,28 +249,26 @@ export default function AdminProjects() {
 
           {/* Filters and Search */}
           <Card className="mb-6">
-            <CardContent className="pt-4 sm:pt-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4">
+            <CardContent className="pt-6">
+              <div className="flex flex-col gap-3">
                 {/* Search */}
-                <div className="sm:col-span-2">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gov-gray-400" />
-                    <Input
-                      placeholder="Search projects..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gov-gray-400" />
+                  <Input
+                    placeholder="Search projects..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10"
+                  />
                 </div>
 
-                {/* Status Filter */}
+                {/* Status Filter and Sort */}
                 <div className="flex gap-2">
                   <div className="flex-1">
                     <select
                       value={statusFilter}
                       onChange={(e) => setStatusFilter(e.target.value)}
-                      className="w-full h-9 px-3 py-1 border border-gov-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gov-maroon-500 focus:border-transparent text-sm"
+                      className="w-full h-10 px-3 py-2 border border-gov-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gov-maroon-500 focus:border-transparent text-sm"
                     >
                       <option value="all">All Status</option>
                       <option value="completed">Completed</option>
@@ -352,24 +350,24 @@ export default function AdminProjects() {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
+            <div className="grid grid-cols-1 gap-4 lg:gap-6">
               {filteredProjects.map((project) => (
                 <Card
                   key={project._id}
                   className="hover:shadow-lg transition-shadow"
                 >
-                  <CardContent className="p-6">
+                  <CardContent className="p-4 md:p-6">
                     <div className="flex flex-col sm:flex-row gap-4">
                       {/* Project Image */}
                       <img
                         src={project.imageUrl}
                         alt={project.title}
-                        className="w-full sm:w-32 h-32 object-cover rounded shrink-0 mx-auto sm:mx-0"
+                        className="w-full sm:w-32 h-48 sm:h-32 object-cover rounded shrink-0"
                       />
 
                       {/* Project Details */}
-                      <div className="flex-1 min-w-0 text-center sm:text-left">
-                        <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-2 mb-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2 mb-2">
                           <h3 className="font-semibold text-gov-gray-900 line-clamp-2">
                             {project.title}
                           </h3>
@@ -380,13 +378,13 @@ export default function AdminProjects() {
                         </p>
 
                         <div className="space-y-1 text-xs text-gov-gray-500 mb-3">
-                          <div className="flex flex-col sm:flex-row items-center gap-2">
+                          <div className="flex items-center gap-2">
                             <span className="font-medium">Department:</span>
                             <span className="truncate">
                               {project.department}
                             </span>
                           </div>
-                          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+                          <div className="flex items-center gap-4">
                             <div className="flex items-center gap-1">
                               <span className="font-medium">Location:</span>
                               <span>{project.location}</span>
@@ -398,7 +396,7 @@ export default function AdminProjects() {
                           </div>
                         </div>
 
-                        <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
+                        <div className="flex items-center justify-between gap-2">
                           <Badge
                             className={`${getStatusColor(
                               project.status
@@ -407,7 +405,7 @@ export default function AdminProjects() {
                             {project.status.replace("-", " ")}
                           </Badge>
 
-                          <div className="flex gap-1 mt-2 sm:mt-0">
+                          <div className="flex gap-1">
                             <Button
                               variant="ghost"
                               size="icon-sm"

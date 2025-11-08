@@ -54,17 +54,17 @@ export default function AdminDashboard() {
 
   return (
     <ProtectedRoute>
-      <div className="flex flex-col md:flex-row">
+      <div className="flex">
         <AdminNavigation />
 
-        <main className="flex-1 p-2 sm:p-4 lg:p-8">
+        <main className="flex-1 lg:ml-64 p-4 md:p-6 lg:p-8 pt-20 lg:pt-8">
           {/* Header */}
-          <div className="mb-6 md:mb-8 text-center md:text-left">
+          <div className="mb-6 md:mb-8">
             <h1 className="text-2xl md:text-3xl font-serif font-bold text-gov-gray-900">
               Dashboard
             </h1>
             <p className="text-gov-gray-600 mt-2">
-              Welcome back! Here's an overview of your projects.
+              Welcome back! Here&apos;s an overview of your projects.
             </p>
           </div>
 
@@ -206,22 +206,24 @@ export default function AdminDashboard() {
                   {recentProjects.map((project) => (
                     <div
                       key={project._id}
-                      className="flex flex-col sm:flex-row items-center gap-4 p-4 border border-gov-gray-200 rounded-lg hover:border-gov-maroon-300 transition-colors"
+                      className="flex items-center gap-4 p-4 border border-gov-gray-200 rounded-lg hover:border-gov-maroon-300 transition-colors"
                     >
                       <img
                         src={project.imageUrl}
                         alt={project.title}
-                        className="w-16 h-16 object-cover rounded mx-auto sm:mx-0"
+                        className="w-16 h-16 object-cover rounded shrink-0"
                       />
-                      <div className="flex-1 min-w-0 text-center sm:text-left">
+                      <div className="flex-1 min-w-0">
                         <h3 className="font-medium text-gov-gray-900 truncate">
                           {project.title}
                         </h3>
-                        <div className="flex items-center gap-4 mt-1 text-sm text-gov-gray-500">
-                          <span>{project.department}</span>
-                          <span>•</span>
+                        <div className="flex flex-wrap items-center gap-2 mt-1 text-xs sm:text-sm text-gov-gray-500">
+                          <span className="truncate max-w-[150px]">
+                            {project.department}
+                          </span>
+                          <span className="hidden sm:inline">•</span>
                           <span>{project.year}</span>
-                          <span>•</span>
+                          <span className="hidden sm:inline">•</span>
                           <span className="capitalize">{project.status}</span>
                         </div>
                       </div>
