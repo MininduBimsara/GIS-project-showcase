@@ -16,7 +16,9 @@ export default function AdminLayout({
       {isLoginPage ? (
         children
       ) : (
-        <div className="min-h-screen bg-gov-gray-50">{children}</div>
+        <div className="min-h-screen bg-gov-gray-50 flex flex-col">
+          {children}
+        </div>
       )}
     </AuthProvider>
   );

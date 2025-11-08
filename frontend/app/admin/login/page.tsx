@@ -35,13 +35,15 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gov-maroon-50 via-white to-gov-navy-50 p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gov-maroon-50 via-white to-gov-navy-50 p-2 sm:p-4">
+      <Card className="w-full max-w-sm sm:max-w-md">
         <CardHeader className="space-y-4 text-center">
-          <div className="mx-auto w-16 h-16 bg-gov-maroon-500 rounded-full flex items-center justify-center">
-            <ShieldCheck className="w-10 h-10 text-white" />
+          <div className="mx-auto w-14 h-14 sm:w-16 sm:h-16 bg-gov-maroon-500 rounded-full flex items-center justify-center">
+            <ShieldCheck className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
           </div>
-          <CardTitle className="text-2xl font-serif">Admin Login</CardTitle>
+          <CardTitle className="text-xl sm:text-2xl font-serif">
+            Admin Login
+          </CardTitle>
           <CardDescription>GIS Solutions - Government Portal</CardDescription>
         </CardHeader>
         <CardContent>

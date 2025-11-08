@@ -54,13 +54,13 @@ export default function AdminDashboard() {
 
   return (
     <ProtectedRoute>
-      <div className="flex">
+      <div className="flex flex-col md:flex-row">
         <AdminNavigation />
 
-        <main className="flex-1 lg:ml-64 p-4 lg:p-8">
+        <main className="flex-1 p-2 sm:p-4 lg:p-8">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-serif font-bold text-gov-gray-900">
+          <div className="mb-6 md:mb-8 text-center md:text-left">
+            <h1 className="text-2xl md:text-3xl font-serif font-bold text-gov-gray-900">
               Dashboard
             </h1>
             <p className="text-gov-gray-600 mt-2">
@@ -70,7 +70,7 @@ export default function AdminDashboard() {
 
           {/* Statistics Cards */}
           {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
               {[1, 2, 3, 4].map((i) => (
                 <Card key={i} className="animate-pulse">
                   <CardHeader className="pb-3">
@@ -83,7 +83,7 @@ export default function AdminDashboard() {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
               <Card className="border-l-4 border-l-gov-navy-500">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
@@ -206,14 +206,14 @@ export default function AdminDashboard() {
                   {recentProjects.map((project) => (
                     <div
                       key={project._id}
-                      className="flex items-center gap-4 p-4 border border-gov-gray-200 rounded-lg hover:border-gov-maroon-300 transition-colors"
+                      className="flex flex-col sm:flex-row items-center gap-4 p-4 border border-gov-gray-200 rounded-lg hover:border-gov-maroon-300 transition-colors"
                     >
                       <img
                         src={project.imageUrl}
                         alt={project.title}
-                        className="w-16 h-16 object-cover rounded"
+                        className="w-16 h-16 object-cover rounded mx-auto sm:mx-0"
                       />
-                      <div className="flex-1 min-w-0">
+                      <div className="flex-1 min-w-0 text-center sm:text-left">
                         <h3 className="font-medium text-gov-gray-900 truncate">
                           {project.title}
                         </h3>
