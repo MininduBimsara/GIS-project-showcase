@@ -31,7 +31,7 @@ export function AdminNavigation() {
   return (
     <>
       {/* Mobile Menu Button */}
-      <div className="lg:hidden fixed top-4 left-4 z-50">
+      <div className="lg:hidden fixed top-4 left-4 z-50 pb-5">
         <Button
           variant="outline"
           size="icon"
