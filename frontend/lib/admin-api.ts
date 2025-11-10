@@ -58,6 +58,7 @@ export async function adminGetProjects(
       throw new Error(result.error || "Failed to fetch projects");
     }
 
+    // Return all projects, do not slice or limit
     const data = result.data || [];
     return data.map(normalizeProject);
   } catch (error) {
