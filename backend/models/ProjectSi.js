@@ -14,7 +14,6 @@ const projectSchema = new mongoose.Schema(
       trim: true,
       minlength: 3,
       maxlength: 200,
-
     },
     description: {
       type: String,
@@ -52,7 +51,8 @@ const projectSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      match: /^https?:\/\/.+/,
+      // Accept full URLs (with or without explicit port like :5000)
+      match: [/^https?:\/\/.+/, "Invalid image URL"],
     },
     projectUrl: {
       type: String,

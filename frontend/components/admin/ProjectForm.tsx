@@ -30,6 +30,8 @@ export function ProjectForm({
     year: new Date().getFullYear().toString(),
     status: "planned" as Project["status"],
   });
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -45,6 +47,8 @@ export function ProjectForm({
         year: project.year,
         status: project.status,
       });
+      setImagePreview(project.imageUrl || "");
+      setImageFile(null);
     }
   }, [project]);
 
@@ -71,10 +75,9 @@ export function ProjectForm({
       newErrors.location = "Location is required";
     }
 
-    if (!formData.imageUrl.trim()) {
-      newErrors.imageUrl = "Image URL is required";
-    } else if (!/^https?:\/\/.+/.test(formData.imageUrl)) {
-      newErrors.imageUrl = "Invalid URL format";
+    // Image validation: require either file or imageUrl
+    if (!imageFile && !formData.imageUrl.trim()) {
+      newErrors.imageUrl = "Image is required";
     }
 
     if (!formData.year.match(/^\d{4}$/)) {
@@ -93,14 +96,22 @@ export function ProjectForm({
     }
 
     try {
-      // FIX: Removed the unnecessary conversion logic.
-      // The formData object already has the correct status
-      // from the <select> element.
-      const payload: Partial<Project> = {
-        ...formData,
-      };
+      // Use FormData for file upload
+      const data = new FormData();
+      data.append("title", formData.title);
+      data.append("description", formData.description);
+      data.append("department", formData.department);
+      data.append("location", formData.location);
+      data.append("year", formData.year);
+      data.append("status", formData.status);
+      data.append("projectUrl", formData.projectUrl);
+      if (imageFile) {
+        data.append("image", imageFile);
+      } else if (formData.imageUrl) {
+        data.append("imageUrl", formData.imageUrl);
+      }
 
-      await onSubmit(payload);
+      await onSubmit(data as any); // onSubmit must handle FormData
     } catch (error) {
       console.error("Form submission error:", error);
     }
@@ -111,11 +122,25 @@ export function ProjectForm({
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    // Clear error for this field
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
+    const { name, value, type, files } = e.target as HTMLInputElement;
+    if (type === "file" && files) {
+      const file = files[0];
+      setImageFile(file);
+      setFormData((prev) => ({ ...prev, imageUrl: "" }));
+      setImagePreview(file ? URL.createObjectURL(file) : "");
+      if (errors.imageUrl) {
+        setErrors((prev) => ({ ...prev, imageUrl: "" }));
+      }
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+      if (name === "imageUrl") {
+        setImageFile(null);
+        setImagePreview(value);
+      }
+      // Clear error for this field
+      if (errors[name]) {
+        setErrors((prev) => ({ ...prev, [name]: "" }));
+      }
     }
   };
 
@@ -276,14 +301,26 @@ export function ProjectForm({
               </div>
             </div>
 
-            {/* Image URL */}
+            {/* Image Upload */}
             <div>
               <label
-                htmlFor="imageUrl"
+                htmlFor="image"
                 className="block text-sm font-medium text-gov-gray-700 mb-1"
               >
-                Image URL *
+                Project Image *
               </label>
+              <Input
+                id="image"
+                name="image"
+                type="file"
+                accept="image/*"
+                onChange={handleChange}
+                disabled={isLoading}
+                aria-invalid={!!errors.imageUrl}
+              />
+              <div className="text-xs text-gov-gray-500 mt-1">
+                Choose an image file or paste an image URL below.
+              </div>
               <Input
                 id="imageUrl"
                 name="imageUrl"
@@ -292,13 +329,14 @@ export function ProjectForm({
                 placeholder="https://example.com/image.jpg"
                 disabled={isLoading}
                 aria-invalid={!!errors.imageUrl}
+                className="mt-2"
               />
               {errors.imageUrl && (
                 <p className="text-sm text-red-600 mt-1">{errors.imageUrl}</p>
               )}
-              {formData.imageUrl && !errors.imageUrl && (
+              {(imagePreview || formData.imageUrl) && !errors.imageUrl && (
                 <img
-                  src={formData.imageUrl}
+                  src={imagePreview || formData.imageUrl}
                   alt="Preview"
                   className="mt-2 w-full h-48 object-cover rounded-md"
                   onError={(e) => {

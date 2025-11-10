@@ -11,6 +11,9 @@ const adminRoutes = require("./routes/AdminRoutes");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Trust proxy so req.protocol reflects HTTPS when behind reverse proxy (e.g., Vercel / Nginx)
+app.set("trust proxy", true);
+
 // Connect to MongoDB
 connectDB();
 
@@ -26,6 +29,17 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+// Serve uploaded images statically with explicit CORS headers
+app.use(
+  "/uploads",
+  (req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET");
+    res.header("Access-Control-Allow-Headers", "Content-Type");
+    next();
+  },
+  express.static(__dirname + "/data/uploads")
+);
 
 // Routes
 app.use("/api/auth", authRoutes);

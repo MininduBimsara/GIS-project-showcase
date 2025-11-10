@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../middleware/authMiddleware");
 const projectController = require("../controller/ProjectController");
+const upload = require("../middleware/uploadMiddleware");
 
 // All admin routes require authentication
 router.use(authMiddleware);
@@ -9,8 +10,16 @@ router.use(authMiddleware);
 // Project Management Routes
 router.get("/projects", projectController.getAllProjects);
 router.get("/projects/:id", projectController.getProjectById);
-router.post("/projects", projectController.createProject);
-router.put("/projects/:id", projectController.updateProject);
+router.post(
+  "/projects",
+  upload.single("image"),
+  projectController.createProject
+);
+router.put(
+  "/projects/:id",
+  upload.single("image"),
+  projectController.updateProject
+);
 router.delete("/projects/:id", projectController.deleteProject);
 
 // TODO: Add these routes for future admin panel implementation

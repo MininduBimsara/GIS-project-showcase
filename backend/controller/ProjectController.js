@@ -87,13 +87,21 @@ exports.createProject = async (req, res) => {
     const {
       title,
       description,
-      imageUrl,
       projectUrl,
       department,
       location,
       year,
       status,
     } = req.body;
+
+    // Multer will provide req.file if an image was uploaded
+    let imageUrl = req.body.imageUrl;
+    if (req.file) {
+      // Store absolute URL so frontend doesn't need to infer origin
+      const host = req.get("host");
+      const protocol = req.protocol; // will be https if behind proxy & trust proxy enabled
+      imageUrl = `${protocol}://${host}/uploads/${req.file.filename}`;
+    }
 
     if (
       !title ||
@@ -107,7 +115,7 @@ exports.createProject = async (req, res) => {
       return res.status(400).json({
         success: false,
         error:
-          "Please provide title, description, imageUrl, department, location, year, and status",
+          "Please provide title, description, image, department, location, year, and status",
       });
     }
 
@@ -193,7 +201,6 @@ exports.updateProject = async (req, res) => {
     const {
       title,
       description,
-      imageUrl,
       projectUrl,
       department,
       location,
@@ -201,6 +208,14 @@ exports.updateProject = async (req, res) => {
       status,
     } = req.body;
     const groupId = req.params.id;
+
+    // Multer will provide req.file if an image was uploaded
+    let imageUrl = req.body.imageUrl;
+    if (req.file) {
+      const host = req.get("host");
+      const protocol = req.protocol;
+      imageUrl = `${protocol}://${host}/uploads/${req.file.filename}`;
+    }
 
     const en = await ProjectEn.findOne({ groupId });
     if (!en) {

@@ -3,6 +3,20 @@ import { Project, ApiResponse } from "@/types/project";
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
+// Derive origin for static file access (strip trailing /api)
+const API_ORIGIN = API_BASE_URL.replace(/\/api$/, "");
+
+function resolveImageUrl(imageUrl: string): string {
+  if (!imageUrl) return imageUrl;
+  return imageUrl.startsWith("/uploads/")
+    ? `${API_ORIGIN}${imageUrl}`
+    : imageUrl;
+}
+
+function normalizeProject(p: Project): Project {
+  return { ...p, imageUrl: resolveImageUrl(p.imageUrl) };
+}
+
 /**
  * Admin API - Get all projects
  */
@@ -33,7 +47,8 @@ export async function adminGetProjects(
       throw new Error(result.error || "Failed to fetch projects");
     }
 
-    return result.data || [];
+    const data = result.data || [];
+    return data.map(normalizeProject);
   } catch (error) {
     console.error("Error fetching projects:", error);
     throw error;
@@ -71,7 +86,7 @@ export async function adminGetProjectById(
       throw new Error(result.error || "Failed to fetch project");
     }
 
-    return result.data;
+    return normalizeProject(result.data);
   } catch (error) {
     console.error("Error fetching project:", error);
     throw error;
@@ -83,17 +98,21 @@ export async function adminGetProjectById(
  */
 export async function adminCreateProject(
   token: string,
-  projectData: Partial<Project>
+  projectData: Partial<Project> | FormData
 ): Promise<Project> {
   try {
+    const isFormData =
+      typeof FormData !== "undefined" && projectData instanceof FormData;
     const response = await fetch(`${API_BASE_URL}/admin/projects`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: isFormData
+        ? { Authorization: `Bearer ${token}` }
+        : {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
       credentials: "include",
-      body: JSON.stringify(projectData),
+      body: isFormData ? projectData : JSON.stringify(projectData),
     });
 
     if (!response.ok) {
@@ -120,7 +139,7 @@ export async function adminCreateProject(
       throw new Error(result.error || "Failed to create project");
     }
 
-    return result.data.project;
+    return normalizeProject(result.data.project);
   } catch (error) {
     console.error("Error creating project:", error);
     throw error;
@@ -133,17 +152,21 @@ export async function adminCreateProject(
 export async function adminUpdateProject(
   token: string,
   id: string,
-  projectData: Partial<Project>
+  projectData: Partial<Project> | FormData
 ): Promise<Project> {
   try {
+    const isFormData =
+      typeof FormData !== "undefined" && projectData instanceof FormData;
     const response = await fetch(`${API_BASE_URL}/admin/projects/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: isFormData
+        ? { Authorization: `Bearer ${token}` }
+        : {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
       credentials: "include",
-      body: JSON.stringify(projectData),
+      body: isFormData ? projectData : JSON.stringify(projectData),
     });
 
     if (!response.ok) {
@@ -157,7 +180,7 @@ export async function adminUpdateProject(
       throw new Error(result.error || "Failed to update project");
     }
 
-    return result.data;
+    return normalizeProject(result.data);
   } catch (error) {
     console.error("Error updating project:", error);
     throw error;

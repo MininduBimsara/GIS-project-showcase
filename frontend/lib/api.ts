@@ -3,6 +3,22 @@ import { Project, ApiResponse, ProjectStats } from "@/types/project";
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
+// Derive origin for static file URLs served by backend (strip trailing /api)
+const API_ORIGIN = API_BASE_URL.replace(/\/api$/, "");
+
+// Normalize image path: convert "/uploads/..." to absolute URL
+function resolveImageUrl(imageUrl: string): string {
+  if (!imageUrl) return imageUrl;
+  return imageUrl.startsWith("/uploads/")
+    ? `${API_ORIGIN}${imageUrl}`
+    : imageUrl;
+}
+
+// Normalize a single project object
+function normalizeProject(p: Project): Project {
+  return { ...p, imageUrl: resolveImageUrl(p.imageUrl) };
+}
+
 /**
  * Fetch all projects from the backend
  * @param language - Language code (en, si, ta)
@@ -30,7 +46,8 @@ export async function fetchProjects(
       throw new Error(result.error || "Failed to fetch projects");
     }
 
-    return result.data || [];
+    const data = result.data || [];
+    return data.map(normalizeProject);
   } catch (error) {
     console.error("Error fetching projects:", error);
     throw error;
@@ -69,7 +86,7 @@ export async function fetchProjectById(
       throw new Error(result.error || "Failed to fetch project");
     }
 
-    return result.data;
+    return normalizeProject(result.data);
   } catch (error) {
     console.error("Error fetching project:", error);
     throw error;
@@ -82,10 +99,9 @@ export async function fetchProjectById(
  * @returns Statistics object
  */
 export function calculateProjectStats(projects: Project[]): ProjectStats {
-  const stats = {
+  const stats: ProjectStats = {
     total: projects.length,
     completed: 0,
-    ongoing: 0,
     inProgress: 0,
     planned: 0,
   };
@@ -94,9 +110,6 @@ export function calculateProjectStats(projects: Project[]): ProjectStats {
     switch (project.status) {
       case "completed":
         stats.completed++;
-        break;
-      case "ongoing":
-        stats.ongoing++;
         break;
       case "in-progress":
         stats.inProgress++;
