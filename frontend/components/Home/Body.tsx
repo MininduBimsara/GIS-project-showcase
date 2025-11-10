@@ -18,7 +18,6 @@ import {
   Building2,
   Search,
   X,
-  Loader2,
   AlertCircle,
 } from "lucide-react";
 import Image from "next/image";
@@ -26,6 +25,7 @@ import Link from "next/link";
 import { useLanguage } from "@/Context/Languagecontext";
 import { fetchProjects } from "@/lib/api";
 import { Project } from "@/types/project";
+import { SkeletonCard } from "@/components/ui/SkeletonCard";
 
 export function MainContent() {
   const { t, language } = useLanguage();
@@ -174,11 +174,12 @@ export function MainContent() {
         )}
       </div>
 
-      {/* Loading State */}
+      {/* Loading State: show skeleton cards instead of spinner */}
       {loading && (
-        <div className="flex flex-col items-center justify-center py-20">
-          <Loader2 className="w-12 h-12 text-[#8b2635] animate-spin mb-4" />
-          <p className="text-slate-600">Loading projects...</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {Array.from({ length: PROJECTS_PER_PAGE }).map((_, idx) => (
+            <SkeletonCard key={idx} />
+          ))}
         </div>
       )}
 

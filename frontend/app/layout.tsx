@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Merriweather, Lora } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/Context/Languagecontext";
-import { Header } from "@/components/Home/Header";
+import  Header  from "@/components/Home/Header";
 
 // Professional Sans-serif font for body text
 const inter = Inter({
@@ -40,11 +40,7 @@ export const metadata: Metadata = {
   ],
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
       <head>
@@ -62,3 +58,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+export default RootLayout;
