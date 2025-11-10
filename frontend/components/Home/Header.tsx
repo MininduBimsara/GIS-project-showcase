@@ -4,9 +4,12 @@ import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { useLanguage } from "@/Context/Languagecontext";
+import { useRouter, usePathname } from "next/navigation";
 
 export function Header() {
   const { language, setLanguage, t } = useLanguage();
+  const router = useRouter();
+  const pathname = usePathname();
 
   return (
     <>
@@ -74,17 +77,31 @@ export function Header() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-[#8b2635] font-semibold"
+                className={`${
+                  pathname === "/"
+                    ? "text-gov-maroon-500 font-bold"
+                    : "text-gov-maroon-500 font-normal"
+                }`}
+                onClick={() => router.push("/")}
               >
                 {t.header.nav.home}
               </Button>
-              <Button variant="ghost" size="sm">
+              {/* <Button variant="ghost" size="sm">
                 {t.header.nav.projects}
               </Button>
               <Button variant="ghost" size="sm">
                 {t.header.nav.services}
-              </Button>
-              <Button variant="ghost" size="sm">
+              </Button> */}
+              <Button
+                variant="ghost"
+                size="sm"
+                className={`${
+                  pathname === "/contact"
+                    ? "text-gov-maroon-500 font-bold"
+                    : "text-gov-maroon-500 font-normal"
+                }`}
+                onClick={() => router.push("/contact")}
+              >
                 {t.header.nav.contact}
               </Button>
             </nav>

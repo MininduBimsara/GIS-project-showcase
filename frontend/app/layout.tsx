@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Merriweather, Lora } from "next/font/google";
 import "./globals.css";
+import { LanguageProvider } from "@/Context/Languagecontext";
+import { Header } from "@/components/Home/Header";
 
 // Professional Sans-serif font for body text
 const inter = Inter({
@@ -52,7 +54,10 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${merriweather.variable} ${lora.variable} font-sans antialiased`}
       >
-        {children}
+        <LanguageProvider>
+          <Header />
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );
