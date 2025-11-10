@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/Context/AuthContext";
+import { useLanguage } from "@/Context/Languagecontext";
 import { ProtectedRoute } from "@/components/admin/ProtectedRoute";
 import { AdminNavigation } from "@/components/admin/AdminNavigation";
 import { ProjectForm } from "@/components/admin/ProjectForm";
@@ -30,6 +31,7 @@ import {
 
 export default function AdminProjects() {
   const { token } = useAuth();
+  const { language } = useLanguage();
   const [projects, setProjects] = useState<Project[]>([]);
   const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -47,20 +49,10 @@ export default function AdminProjects() {
   const [deletingProject, setDeletingProject] = useState<Project | undefined>();
   const [isDeleting, setIsDeleting] = useState(false);
 
-  useEffect(() => {
-    if (token) {
-      loadProjects();
-    }
-  }, [token]);
-
-  useEffect(() => {
-    filterAndSortProjects();
-  }, [projects, searchQuery, statusFilter, sortOrder]);
-
   const loadProjects = async () => {
     try {
       setIsLoading(true);
-      const data = await adminGetProjects(token!, "en");
+      const data = await adminGetProjects(token!, language);
       setProjects(data);
     } catch (error) {
       console.error("Failed to load projects:", error);
@@ -68,6 +60,18 @@ export default function AdminProjects() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (token) {
+      loadProjects();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, language]);
+
+  useEffect(() => {
+    filterAndSortProjects();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projects, searchQuery, statusFilter, sortOrder]);
 
   const filterAndSortProjects = () => {
     let filtered = [...projects];

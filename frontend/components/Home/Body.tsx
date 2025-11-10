@@ -36,58 +36,24 @@ export function MainContent() {
   const [currentPage, setCurrentPage] = useState(1);
   const PROJECTS_PER_PAGE = 6;
 
-  // Fetch projects when language changes, with localStorage caching for first 6
+  // Fetch projects when language changes
   useEffect(() => {
     let cancelled = false;
-    const CACHE_KEY = `cachedFirst6Projects:${language}`;
 
-    const readCache = (): Project[] | null => {
-      try {
-        const raw = localStorage.getItem(CACHE_KEY);
-        if (!raw) return null;
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? (parsed as Project[]) : null;
-      } catch {
-        return null;
-      }
-    };
-
-    const writeCache = (list: Project[]) => {
-      try {
-        const firstSix = Array.isArray(list) ? list.slice(0, 6) : [];
-        localStorage.setItem(CACHE_KEY, JSON.stringify(firstSix));
-      } catch {
-        // ignore quota/serialization errors
-      }
-    };
-
-    // 1) Try to paint from cache quickly
-    const cached = readCache();
-    if (cached && cached.length) {
-      setProjects(cached);
-      setCurrentPage(1);
-      setLoading(false);
-    } else {
-      setLoading(true);
-    }
-
-    // 2) Always fetch latest in background and refresh state + cache
     const fetchAll = async () => {
       try {
+        setLoading(true);
         setError(null);
         const data = await fetchProjects(language);
         if (cancelled) return;
         setProjects(data);
         setCurrentPage(1);
-        writeCache(data);
       } catch (err) {
         if (cancelled) return;
         console.error("Failed to load projects:", err);
-        if (!cached) {
-          setError(
-            err instanceof Error ? err.message : "Failed to load projects"
-          );
-        }
+        setError(
+          err instanceof Error ? err.message : "Failed to load projects"
+        );
       } finally {
         if (!cancelled) setLoading(false);
       }
