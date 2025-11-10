@@ -51,8 +51,13 @@ const projectSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      // Accept full URLs (with or without explicit port like :5000)
-      match: [/^https?:\/\/.+/, "Invalid image URL"],
+      // Accept both relative paths and full URLs
+      validate: {
+        validator: function (v) {
+          return /^(\/uploads\/|https?:\/\/).+/.test(v);
+        },
+        message: "Invalid image URL or path",
+      },
     },
     projectUrl: {
       type: String,

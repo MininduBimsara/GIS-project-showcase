@@ -3,6 +3,8 @@ const ProjectEn = require("../models/ProjectEn");
 const ProjectSi = require("../models/ProjectSi");
 const ProjectTa = require("../models/ProjectTa");
 const { translateText } = require("../services/translationService");
+const path = require("path");
+const fs = require("fs").promises;
 
 const getModelByLang = (lang) => {
   const l = (lang || "en").toLowerCase();
@@ -11,7 +13,22 @@ const getModelByLang = (lang) => {
   return ProjectEn;
 };
 
-// ✅ Safe translation helper with fallback
+// Helper to delete image file from filesystem
+const deleteImageFile = async (imageUrl) => {
+  if (!imageUrl || !imageUrl.startsWith("/uploads/")) return;
+
+  const filePath = path.join(__dirname, "../data", imageUrl);
+  try {
+    await fs.unlink(filePath);
+    console.log(`✅ Deleted image: ${filePath}`);
+  } catch (err) {
+    if (err.code !== "ENOENT") {
+      console.error(`⚠️ Failed to delete image ${filePath}:`, err.message);
+    }
+  }
+};
+
+// Safe translation helper with fallback
 const safeTranslate = async (text, lang) => {
   try {
     if (!text) return text;
@@ -24,12 +41,12 @@ const safeTranslate = async (text, lang) => {
       console.warn(
         `⚠️ Translation for ${lang} returned empty or invalid. Using fallback.`
       );
-      return text; // fallback to English
+      return text;
     }
     return translated;
   } catch (err) {
     console.error(`⚠️ Translation failed for ${lang}:`, err.message);
-    return text; // fallback to English
+    return text;
   }
 };
 
@@ -94,13 +111,10 @@ exports.createProject = async (req, res) => {
       status,
     } = req.body;
 
-    // Multer will provide req.file if an image was uploaded
+    // Store relative path instead of absolute URL
     let imageUrl = req.body.imageUrl;
     if (req.file) {
-      // Store absolute URL so frontend doesn't need to infer origin
-      const host = req.get("host");
-      const protocol = req.protocol; // will be https if behind proxy & trust proxy enabled
-      imageUrl = `${protocol}://${host}/uploads/${req.file.filename}`;
+      imageUrl = `/uploads/${req.file.filename}`;
     }
 
     if (
@@ -135,7 +149,7 @@ exports.createProject = async (req, res) => {
       createdBy: req.user.id,
     });
 
-    // ✅ Use safeTranslate with fallback
+    // Translate and create Sinhala and Tamil versions
     const [titleSi, descSi, deptSi] = await Promise.all([
       safeTranslate(title, "si"),
       safeTranslate(description, "si"),
@@ -147,7 +161,6 @@ exports.createProject = async (req, res) => {
       safeTranslate(department, "ta"),
     ]);
 
-    // Create Sinhala and Tamil versions
     await Promise.all([
       ProjectSi.create({
         groupId,
@@ -209,19 +222,24 @@ exports.updateProject = async (req, res) => {
     } = req.body;
     const groupId = req.params.id;
 
-    // Multer will provide req.file if an image was uploaded
-    let imageUrl = req.body.imageUrl;
-    if (req.file) {
-      const host = req.get("host");
-      const protocol = req.protocol;
-      imageUrl = `${protocol}://${host}/uploads/${req.file.filename}`;
-    }
-
     const en = await ProjectEn.findOne({ groupId });
     if (!en) {
       return res
         .status(404)
         .json({ success: false, error: "Project not found" });
+    }
+
+    // Store old image URL for deletion if being replaced
+    const oldImageUrl = en.imageUrl;
+
+    // Handle new image upload
+    let imageUrl = req.body.imageUrl;
+    if (req.file) {
+      imageUrl = `/uploads/${req.file.filename}`;
+      // Delete old image if it was stored locally
+      if (oldImageUrl && oldImageUrl !== imageUrl) {
+        await deleteImageFile(oldImageUrl);
+      }
     }
 
     // Update EN
@@ -235,7 +253,7 @@ exports.updateProject = async (req, res) => {
     if (status !== undefined) en.status = status;
     await en.save();
 
-    // ✅ Re-translate safely
+    // Re-translate and update other language versions if text fields changed
     if (
       title !== undefined ||
       description !== undefined ||
@@ -288,7 +306,6 @@ exports.updateProject = async (req, res) => {
           {
             ...(imageUrl !== undefined ? { imageUrl } : {}),
             ...(projectUrl !== undefined ? { projectUrl } : {}),
-            ...(department !== undefined ? { department } : {}),
             ...(location !== undefined ? { location } : {}),
             ...(year !== undefined ? { year } : {}),
             ...(status !== undefined ? { status } : {}),
@@ -299,7 +316,6 @@ exports.updateProject = async (req, res) => {
           {
             ...(imageUrl !== undefined ? { imageUrl } : {}),
             ...(projectUrl !== undefined ? { projectUrl } : {}),
-            ...(department !== undefined ? { department } : {}),
             ...(location !== undefined ? { location } : {}),
             ...(year !== undefined ? { year } : {}),
             ...(status !== undefined ? { status } : {}),
@@ -339,6 +355,10 @@ exports.deleteProject = async (req, res) => {
         .json({ success: false, error: "Project not found" });
     }
 
+    // Delete associated image file
+    await deleteImageFile(en.imageUrl);
+
+    // Delete all language versions
     await Promise.all([
       ProjectEn.deleteOne({ groupId }),
       ProjectSi.deleteOne({ groupId }),
