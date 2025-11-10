@@ -6,11 +6,22 @@ const API_BASE_URL =
 // Derive origin for static file access (strip trailing /api)
 const API_ORIGIN = API_BASE_URL.replace(/\/api$/, "");
 
+// Normalize image path: convert relative "/uploads/..." to absolute URL
 function resolveImageUrl(imageUrl: string): string {
   if (!imageUrl) return imageUrl;
-  return imageUrl.startsWith("/uploads/")
-    ? `${API_ORIGIN}${imageUrl}`
-    : imageUrl;
+
+  // If it's already a full URL, return as-is
+  if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+    return imageUrl;
+  }
+
+  // If it's a relative path starting with /uploads/, prepend API origin
+  if (imageUrl.startsWith("/uploads/")) {
+    return `${API_ORIGIN}${imageUrl}`;
+  }
+
+  // Otherwise return as-is
+  return imageUrl;
 }
 
 function normalizeProject(p: Project): Project {

@@ -6,12 +6,22 @@ const API_BASE_URL =
 // Derive origin for static file URLs served by backend (strip trailing /api)
 const API_ORIGIN = API_BASE_URL.replace(/\/api$/, "");
 
-// Normalize image path: convert "/uploads/..." to absolute URL
+// Normalize image path: convert relative "/uploads/..." to absolute URL
 function resolveImageUrl(imageUrl: string): string {
   if (!imageUrl) return imageUrl;
-  return imageUrl.startsWith("/uploads/")
-    ? `${API_ORIGIN}${imageUrl}`
-    : imageUrl;
+
+  // If it's already a full URL (starts with http:// or https://), return as-is
+  if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+    return imageUrl;
+  }
+
+  // If it's a relative path starting with /uploads/, prepend API origin
+  if (imageUrl.startsWith("/uploads/")) {
+    return `${API_ORIGIN}${imageUrl}`;
+  }
+
+  // Otherwise return as-is
+  return imageUrl;
 }
 
 // Normalize a single project object
@@ -21,8 +31,6 @@ function normalizeProject(p: Project): Project {
 
 /**
  * Fetch all projects from the backend
- * @param language - Language code (en, si, ta)
- * @returns Promise with projects array
  */
 export async function fetchProjects(
   language: string = "en"
@@ -33,7 +41,7 @@ export async function fetchProjects(
       headers: {
         "Content-Type": "application/json",
       },
-      cache: "no-store", // Always fetch fresh data
+      cache: "no-store",
     });
 
     if (!response.ok) {
@@ -56,9 +64,6 @@ export async function fetchProjects(
 
 /**
  * Fetch a single project by ID
- * @param id - Project group ID
- * @param language - Language code (en, si, ta)
- * @returns Promise with project
  */
 export async function fetchProjectById(
   id: string,
@@ -95,8 +100,6 @@ export async function fetchProjectById(
 
 /**
  * Calculate project statistics
- * @param projects - Array of projects
- * @returns Statistics object
  */
 export function calculateProjectStats(projects: Project[]): ProjectStats {
   const stats: ProjectStats = {
@@ -123,10 +126,7 @@ export function calculateProjectStats(projects: Project[]): ProjectStats {
   return stats;
 }
 
-/**
- * Admin API functions (to be implemented later)
- */
-
+// Admin API functions
 export async function createProject(
   projectData: Partial<Project>,
   token: string
