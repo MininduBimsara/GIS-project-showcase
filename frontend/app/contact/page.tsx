@@ -18,7 +18,7 @@ import {
 import { useLanguage } from "@/Context/Languagecontext";
 
 function ContactPage() {
-  useLanguage();
+  const { t } = useLanguage();
   const [status, setStatus] = useState<"idle" | "loading">("idle");
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -60,17 +60,14 @@ function ContactPage() {
                 <CheckCircle2 className="w-10 h-10 text-green-600" />
               </div>
               <h3 className="text-2xl font-bold text-slate-800 mb-2">
-                Success!
+                {t.contact.success.title}
               </h3>
-              <p className="text-slate-600 mb-6">
-                Your message has been sent successfully. We&apos;ll get back to
-                you soon.
-              </p>
+              <p className="text-slate-600 mb-6">{t.contact.success.message}</p>
               <Button
                 onClick={closeSuccessPopup}
                 className="bg-[#8b2635] hover:bg-[#6d1f29] text-white px-8"
               >
-                Close
+                {t.contact.success.close}
               </Button>
             </div>
           </div>
@@ -80,12 +77,11 @@ function ContactPage() {
       {/* Page Header */}
       <div className="mb-5 text-center">
         <h2 className="text-4xl md:text-5xl font-bold text-gov-maroon-500 mb-4 font-serif">
-          Contact Us
+          {t.contact.pageTitle}
         </h2>
         <div className="w-24 h-1 bg-gov-gold-400 mx-auto mb-6"></div>
         <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">
-          Get in touch with us. We&apos;re here to help and answer any questions
-          you might have.
+          {t.contact.pageDescription}
         </p>
       </div>
 
@@ -100,12 +96,12 @@ function ContactPage() {
               </div>
               <div>
                 <h3 className="font-bold text-lg text-slate-800 mb-2">
-                  Address
+                  {t.contact.contactInfo.address.title}
                 </h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  GIS Solutions (Private) Limited, #370,
+                  {t.contact.contactInfo.address.line1}
                   <br />
-                  Galle Road, Colombo 3, Sri Lanka
+                  {t.contact.contactInfo.address.line2}
                 </p>
               </div>
             </div>
@@ -118,9 +114,11 @@ function ContactPage() {
                 <Phone className="w-6 h-6 text-gov-maroon-500" />
               </div>
               <div>
-                <h3 className="font-bold text-lg text-slate-800 mb-2">Phone</h3>
+                <h3 className="font-bold text-lg text-slate-800 mb-2">
+                  {t.contact.contactInfo.phone.title}
+                </h3>
                 <p className="text-slate-600 text-sm">
-                  Hot Line:{" "}
+                  {t.contact.contactInfo.phone.hotline}{" "}
                   <a
                     href="tel:+94777270603"
                     className="hover:text-gov-maroon-500"
@@ -129,7 +127,7 @@ function ContactPage() {
                   </a>
                 </p>
                 <p className="text-slate-600 text-sm">
-                  Tel:{" "}
+                  {t.contact.contactInfo.phone.tel}{" "}
                   <a
                     href="tel:+94112575299"
                     className="hover:text-gov-maroon-500"
@@ -137,7 +135,9 @@ function ContactPage() {
                     +94 112 575 299
                   </a>
                 </p>
-                <p className="text-slate-600 text-sm">Fax: +94 11 257 5297</p>
+                <p className="text-slate-600 text-sm">
+                  {t.contact.contactInfo.phone.fax}
+                </p>
               </div>
             </div>
           </div>
@@ -149,12 +149,14 @@ function ContactPage() {
                 <Mail className="w-6 h-6 text-gov-maroon-500" />
               </div>
               <div>
-                <h3 className="font-bold text-lg text-slate-800 mb-2">Email</h3>
+                <h3 className="font-bold text-lg text-slate-800 mb-2">
+                  {t.contact.contactInfo.email.title}
+                </h3>
                 <a
                   href="mailto:info@gislk.com"
                   className="text-slate-600 text-sm hover:text-gov-maroon-500 transition-colors"
                 >
-                  info@gislk.com
+                  {t.contact.contactInfo.email.address}
                 </a>
               </div>
             </div>
@@ -163,7 +165,7 @@ function ContactPage() {
           {/* Social Media */}
           <div className="bg-gradient-to-br from-gov-maroon-500 to-[#6d1f29] rounded-xl shadow-lg p-6">
             <h3 className="font-bold text-lg text-white mb-4">
-              Connect With Us
+              {t.contact.contactInfo.social.title}
             </h3>
             <div className="flex gap-3">
               <a
@@ -201,7 +203,7 @@ function ContactPage() {
         <div className="lg:col-span-2">
           <div className="bg-white rounded-xl shadow-lg p-8 border-2 border-slate-100">
             <h3 className="text-2xl font-bold text-slate-800 mb-6 font-serif">
-              Send us a Message
+              {t.contact.form.title}
             </h3>
 
             {/* FormSubmit.co Integration */}
@@ -233,13 +235,16 @@ function ContactPage() {
                     htmlFor="firstName"
                     className="block text-sm font-medium text-slate-700 mb-2"
                   >
-                    First Name <span className="text-red-500">*</span>
+                    {t.contact.form.firstName.label}{" "}
+                    <span className="text-red-500">
+                      {t.contact.form.required}
+                    </span>
                   </label>
                   <Input
                     id="firstName"
                     name="First Name"
                     type="text"
-                    placeholder="Enter your first name"
+                    placeholder={t.contact.form.firstName.placeholder}
                     className="border-2 border-slate-200 focus:border-[#8b2635] rounded-lg"
                     required
                   />
@@ -249,13 +254,16 @@ function ContactPage() {
                     htmlFor="lastName"
                     className="block text-sm font-medium text-slate-700 mb-2"
                   >
-                    Last Name <span className="text-red-500">*</span>
+                    {t.contact.form.lastName.label}{" "}
+                    <span className="text-red-500">
+                      {t.contact.form.required}
+                    </span>
                   </label>
                   <Input
                     id="lastName"
                     name="Last Name"
                     type="text"
-                    placeholder="Enter your last name"
+                    placeholder={t.contact.form.lastName.placeholder}
                     className="border-2 border-slate-200 focus:border-[#8b2635] rounded-lg"
                     required
                   />
@@ -268,13 +276,16 @@ function ContactPage() {
                   htmlFor="email"
                   className="block text-sm font-medium text-slate-700 mb-2"
                 >
-                  Email Address <span className="text-red-500">*</span>
+                  {t.contact.form.email.label}{" "}
+                  <span className="text-red-500">
+                    {t.contact.form.required}
+                  </span>
                 </label>
                 <Input
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="your.email@example.com"
+                  placeholder={t.contact.form.email.placeholder}
                   className="border-2 border-slate-200 focus:border-[#8b2635] rounded-lg"
                   required
                 />
@@ -286,13 +297,13 @@ function ContactPage() {
                   htmlFor="contactNo"
                   className="block text-sm font-medium text-slate-700 mb-2"
                 >
-                  Contact Number
+                  {t.contact.form.contactNumber.label}
                 </label>
                 <Input
                   id="contactNo"
                   name="Contact Number"
                   type="tel"
-                  placeholder="+94 77 123 4567"
+                  placeholder={t.contact.form.contactNumber.placeholder}
                   className="border-2 border-slate-200 focus:border-[#8b2635] rounded-lg"
                 />
               </div>
@@ -303,12 +314,15 @@ function ContactPage() {
                   htmlFor="message"
                   className="block text-sm font-medium text-slate-700 mb-2"
                 >
-                  Message <span className="text-red-500">*</span>
+                  {t.contact.form.message.label}{" "}
+                  <span className="text-red-500">
+                    {t.contact.form.required}
+                  </span>
                 </label>
                 <Textarea
                   id="message"
                   name="message"
-                  placeholder="Tell us how we can help you..."
+                  placeholder={t.contact.form.message.placeholder}
                   rows={6}
                   className="border-2 border-slate-200 focus:border-[#8b2635] rounded-lg resize-none"
                   required
@@ -324,11 +338,11 @@ function ContactPage() {
                 {status === "loading" ? (
                   <>
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-                    Sending...
+                    {t.contact.form.sending}
                   </>
                 ) : (
                   <>
-                    Send Message
+                    {t.contact.form.submit}
                     <Send className="w-5 h-5 ml-2" />
                   </>
                 )}
@@ -342,7 +356,7 @@ function ContactPage() {
       <div className="mt-16">
         <div className="bg-white rounded-xl shadow-lg p-4 border-2 border-slate-100 overflow-hidden">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.8613339452813!2d79.84789107499628!3d6.907179893092248!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae2595d8254ba5d%3A0xb2cf141bb1db129e!2sGIS%20Solutions%20Private%20Limited!5e0!3m2!1sen!2slk!4v1762751020479!5m2!1sen!2slk" 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.8613339452813!2d79.84789107499628!3d6.907179893092248!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae2595d8254ba5d%3A0xb2cf141bb1db129e!2sGIS%20Solutions%20Private%20Limited!5e0!3m2!1sen!2slk!4v1762751020479!5m2!1sen!2slk"
             width="100%"
             height="400"
             style={{ border: 0 }}

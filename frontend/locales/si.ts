@@ -2,7 +2,7 @@ export const si = {
   // Header
   header: {
     email: "info@gis.gov.lk",
-    phone: "+94 11 234 5678",
+    phone: "+94 112 575 299",
     title: "GIS Solutions පුද්ගලික සමාගම",
     subtitle: "ශ්‍රී ලංකා ප්‍රජාතාන්ත්‍රික සමාජවාදී ජනරජයේ රජය",
     nav: {
@@ -111,5 +111,64 @@ export const si = {
     ongoing: "කරගෙන යන",
     "in-progress": "ප්‍රගතියේ",
     planned: "සැලසුම් කර ඇත",
+  },
+
+  // Contact Page
+  contact: {
+    pageTitle: "අප අමතන්න",
+    pageDescription:
+      "අප සමඟ සම්බන්ධ වන්න. ඔබට ඇති ඕනෑම ප්‍රශ්නයකට උදව් කිරීමට සහ පිළිතුරු දීමට අපි මෙහි සිටිමු.",
+    contactInfo: {
+      address: {
+        title: "ලිපිනය",
+        line1: "GIS Solutions පුද්ගලික සමාගම, #370,",
+        line2: "ගාල්ල පාර, කොළඹ 3, ශ්‍රී ලංකාව",
+      },
+      phone: {
+        title: "දුරකථනය",
+        hotline: "හොට් ලයින්:",
+        tel: "දුරකථන:",
+        fax: "ෆැක්ස්: +94 11 257 5297",
+      },
+      email: {
+        title: "විද්‍යුත් තැපෑල",
+        address: "info@gislk.com",
+      },
+      social: {
+        title: "අප සමඟ සම්බන්ධ වන්න",
+      },
+    },
+    form: {
+      title: "අපට පණිවිඩයක් යවන්න",
+      firstName: {
+        label: "මුල් නම",
+        placeholder: "ඔබගේ මුල් නම ඇතුළත් කරන්න",
+      },
+      lastName: {
+        label: "අවසාන නම",
+        placeholder: "ඔබගේ අවසාන නම ඇතුළත් කරන්න",
+      },
+      email: {
+        label: "විද්‍යුත් තැපෑල ලිපිනය",
+        placeholder: "your.email@example.com",
+      },
+      contactNumber: {
+        label: "සම්බන්ධතා අංකය",
+        placeholder: "+94 77 123 4567",
+      },
+      message: {
+        label: "පණිවිඩය",
+        placeholder: "අපට ඔබට උදව් කළ හැකි ආකාරය කියන්න...",
+      },
+      required: "*",
+      submit: "පණිවිඩය යවන්න",
+      sending: "යවමින්...",
+    },
+    success: {
+      title: "සාර්ථකයි!",
+      message:
+        "ඔබගේ පණිවිඩය සාර්ථකව යවා ඇත. අපි ඉක්මනින් ඔබ හා සම්බන්ධ වන්නෙමු.",
+      close: "වසන්න",
+    },
   },
 };

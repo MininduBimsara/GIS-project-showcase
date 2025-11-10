@@ -2,7 +2,7 @@ export const ta = {
   // Header
   header: {
     email: "info@gis.gov.lk",
-    phone: "+94 11 234 5678",
+    phone: "+94 112 575 299",
     title: "GIS சொல்யூஷன்ஸ் பிரைவேட் லிமிடெட்",
     subtitle: "இலங்கை ஜனநாயக சோஷலிச குடியரசின் அரசாங்கம்",
     nav: {
@@ -106,5 +106,65 @@ export const ta = {
     ongoing: "நடைபெறும்",
     "in-progress": "முன்னேற்றத்தில்",
     planned: "திட்டமிடப்பட்ட",
+  },
+
+  // Contact Page
+  contact: {
+    pageTitle: "எங்களை தொடர்பு கொள்ளுங்கள்",
+    pageDescription:
+      "எங்களுடன் தொடர்பு கொள்ளுங்கள். உங்களுக்கு இருக்கும் கேள்விகளுக்கு உதவ நாங்கள் இங்கு இருக்கிறோம்.",
+    contactInfo: {
+      address: {
+        title: "முகவரி",
+        line1: "GIS சொல்யூஷன்ஸ் பிரைவேட் லிமிடெட், #370,",
+        line2: "கால் சாலை, கொழும்பு 3, இலங்கை",
+      },
+      phone: {
+        title: "தொலைபேசி",
+        hotline: "ஹாட் லைன்:",
+        tel: "தொ.பே:",
+        fax: "தொலைநகல்: +94 11 257 5297",
+      },
+      email: {
+        title: "மின்னஞ்சல்",
+        address: "info@gislk.com",
+      },
+      social: {
+        title: "எங்களுடன் இணைக்கவும்",
+      },
+    },
+    form: {
+      title: "எங்களுக்கு ஒரு செய்தி அனுப்புங்கள்",
+      firstName: {
+        label: "முதல் பெயர்",
+        placeholder: "உங்கள் முதல் பெயரை உள்ளிடவும்",
+      },
+      lastName: {
+        label: "கடைசி பெயர்",
+        placeholder: "உங்கள் கடைசி பெயரை உள்ளிடவும்",
+      },
+      email: {
+        label: "மின்னஞ்சல் முகவரி",
+        placeholder: "your.email@example.com",
+      },
+      contactNumber: {
+        label: "தொடர்பு எண்",
+        placeholder: "+94 77 123 4567",
+      },
+      message: {
+        label: "செய்தி",
+        placeholder:
+          "நாங்கள் உங்களுக்கு எப்படி உதவ முடியும் என்று சொல்லுங்கள்...",
+      },
+      required: "*",
+      submit: "செய்தியை அனுப்பு",
+      sending: "அனுப்புகிறது...",
+    },
+    success: {
+      title: "வெற்றி!",
+      message:
+        "உங்கள் செய்தி வெற்றிகரமாக அனுப்பப்பட்டது. நாங்கள் விரைவில் உங்களைத் தொடர்பு கொள்வோம்.",
+      close: "மூடு",
+    },
   },
 };

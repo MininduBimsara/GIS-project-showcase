@@ -2,7 +2,7 @@ export const en = {
   // Header
   header: {
     email: "info@gis.gov.lk",
-    phone: "+94 11 234 5678",
+    phone: "+94 112 575 299",
     title: "GIS Solutions Private Limited",
     subtitle: "Government of the Democratic Socialist Republic of Sri Lanka",
     nav: {
@@ -106,5 +106,64 @@ export const en = {
     ongoing: "Ongoing",
     "in-progress": "In Progress",
     planned: "Planned",
+  },
+
+  // Contact Page
+  contact: {
+    pageTitle: "Contact Us",
+    pageDescription:
+      "Get in touch with us. We're here to help and answer any questions you might have.",
+    contactInfo: {
+      address: {
+        title: "Address",
+        line1: "GIS Solutions (Private) Limited, #370,",
+        line2: "Galle Road, Colombo 3, Sri Lanka",
+      },
+      phone: {
+        title: "Phone",
+        hotline: "Hot Line:",
+        tel: "Tel:",
+        fax: "Fax: +94 11 257 5297",
+      },
+      email: {
+        title: "Email",
+        address: "info@gislk.com",
+      },
+      social: {
+        title: "Connect With Us",
+      },
+    },
+    form: {
+      title: "Send us a Message",
+      firstName: {
+        label: "First Name",
+        placeholder: "Enter your first name",
+      },
+      lastName: {
+        label: "Last Name",
+        placeholder: "Enter your last name",
+      },
+      email: {
+        label: "Email Address",
+        placeholder: "your.email@example.com",
+      },
+      contactNumber: {
+        label: "Contact Number",
+        placeholder: "+94 77 123 4567",
+      },
+      message: {
+        label: "Message",
+        placeholder: "Tell us how we can help you...",
+      },
+      required: "*",
+      submit: "Send Message",
+      sending: "Sending...",
+    },
+    success: {
+      title: "Success!",
+      message:
+        "Your message has been sent successfully. We'll get back to you soon.",
+      close: "Close",
+    },
   },
 };
