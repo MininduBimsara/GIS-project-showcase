@@ -342,7 +342,7 @@ function ContactPage() {
       <div className="mt-16">
         <div className="bg-white rounded-xl shadow-lg p-4 border-2 border-slate-100 overflow-hidden">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.798475963665!2d79.84862931477308!3d6.916847695008097!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae259660c45274f%3A0x123456789abcdef!2sGalle%20Rd%2C%20Colombo!5e0!3m2!1sen!2slk!4v1234567890123!5m2!1sen!2slk"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.8613339452813!2d79.84789107499628!3d6.907179893092248!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae2595d8254ba5d%3A0xb2cf141bb1db129e!2sGIS%20Solutions%20Private%20Limited!5e0!3m2!1sen!2slk!4v1762751020479!5m2!1sen!2slk" 
             width="100%"
             height="400"
             style={{ border: 0 }}
